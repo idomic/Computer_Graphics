@@ -36,6 +36,7 @@ public class Ex3 {
 		if (args.length > 2) {
 			canvasHeight = Integer.valueOf(args[2]);
 		}
+		// Added new comment
 		if (args.length > 3) {
 			imageFilename = args[3];
 		}
