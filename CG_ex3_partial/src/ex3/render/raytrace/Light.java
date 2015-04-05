@@ -12,7 +12,13 @@ import math.Vec;
  */
 public abstract class Light implements IInitable {
 //TODO add methods. If you don't like this class you can write your own.
-	protected Vec color;
+	protected Vec color = null;
+	private Vec direction = null;
+	private Vec pos = null;
+	private Vec attenuation = null;
+	private String type;
+	
+
 
 	public Light() {
 		color = new Vec(1,1,1);
