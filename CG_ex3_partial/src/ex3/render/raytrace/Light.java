@@ -1,8 +1,6 @@
 package ex3.render.raytrace;
 
 import java.util.Map;
-
-import math.Point3D;
 import math.Vec;
 
 /**
@@ -12,12 +10,7 @@ import math.Vec;
  */
 public abstract class Light implements IInitable {
 //TODO add methods. If you don't like this class you can write your own.
-	protected Vec color = null;
-	private Vec direction = null;
-	private Vec pos = null;
-	private Vec attenuation = null;
-	private String type;
-	
+	protected Vec color;
 
 
 	public Light() {
@@ -27,10 +20,7 @@ public abstract class Light implements IInitable {
 	@Override
 	public void init(Map<String, String> attributes) {
 		if (attributes.containsKey("color")){
-			//TODO to uncomment this line you should inplement constructor 
-			//with a string argument for Vec. You have an example in Point3D class
-			
-			//color = new Vec(attributes.get("color"));
+			color = new Vec(attributes.get("color"));
 		}
 	}
 	

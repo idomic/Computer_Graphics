@@ -1,5 +1,6 @@
 package math;
 
+import java.util.Scanner;
 
 /**
  * 3D vector class that contains three doubles. Could be used to represent
@@ -17,7 +18,27 @@ public class Vec {
 	 * Initialize vector to (0,0,0)
 	 */
 	public Vec() {
-		//TODO: 
+		x = 0;
+		y = 0;
+		z = 0;
+	}
+	
+	/**
+	 * A method to get a vector out of a string.
+	 * @param string
+	 */
+	public Vec(String string) {
+		if (string.equals("")) {
+			x = 0;
+			y = 0;
+			z = 0;
+		} else {
+			Scanner s = new Scanner(string);
+			x = s.nextDouble();
+			y = s.nextDouble();
+			z = s.nextDouble();
+			s.close();
+		}
 	}
 
 	/**
@@ -43,7 +64,9 @@ public class Vec {
 	 *            Vector
 	 */
 	public Vec(Vec v) {
-		//TODO:
+		x = v.x;
+		y = v.y;
+		z = v.z;
 	}
 
 	/**
@@ -53,8 +76,9 @@ public class Vec {
 	 * @return The reflected vector
 	 */
 	public Vec reflect(Vec normal) {
-		//TODO:
-		return null;
+		double scalar = this.dotProd(normal);
+		return new Vec(sub(this, new Vec(2 * scalar * normal.x, 2 * scalar
+				* normal.y, 2 * scalar * normal.z)));
 	}
 
 	/**
@@ -64,7 +88,9 @@ public class Vec {
 	 *            Vector
 	 */
 	public void add(Vec a) {
-		//TODO:
+		x += a.x;
+		y += a.y;
+		z += a.z;
 	}
 
 	/**
@@ -74,9 +100,11 @@ public class Vec {
 	 *            Vector
 	 */
 	public void sub(Vec a) {
-		//TODO:
+		x -= a.x;
+		y -= a.y;
+		z -= a.z;
 	}
-	
+
 	/**
 	 * Multiplies & Accumulates vector with given vector and a. v := v + s*a
 	 * 
@@ -86,7 +114,9 @@ public class Vec {
 	 *            Vector
 	 */
 	public void mac(double s, Vec a) {
-		//TODO:
+		x += s * a.x;
+		y += s * a.y;
+		z += s * a.z;
 	}
 
 	/**
@@ -96,17 +126,21 @@ public class Vec {
 	 *            Scalar
 	 */
 	public void scale(double s) {
-		//TODO:
+		x *= s;
+		y *= s;
+		z *= s;
 	}
 
 	/**
-	 * Pairwise multiplies with anther vector
+	 * Pairwise multiplies with another vector
 	 * 
 	 * @param a
 	 *            Vector
 	 */
 	public void scale(Vec a) {
-		//TODO:
+		x *= a.x;
+		y *= a.y;
+		z *= a.z;
 	}
 
 	/**
@@ -115,7 +149,7 @@ public class Vec {
 	 * @return Vector
 	 */
 	public void negate() {
-		//TODO:
+		scale(-1);
 	}
 
 	/**
@@ -124,8 +158,7 @@ public class Vec {
 	 * @return Scalar
 	 */
 	public double length() {
-		//TODO:
-		return Double.NaN;
+		return (double) Math.sqrt(lengthSquared());
 	}
 
 	/**
@@ -134,8 +167,7 @@ public class Vec {
 	 * @return Scalar
 	 */
 	public double lengthSquared() {
-		//TODO:
-		return Double.NaN;		
+		return (double) (x * x) + (y * y) + (z * z);
 	}
 
 	/**
@@ -146,17 +178,23 @@ public class Vec {
 	 * @return Scalar
 	 */
 	public double dotProd(Vec a) {
-		//TODO:
-		return Double.NaN;
+		return (double) ((x * a.x) + (y * a.y) + (z * a.z));
 	}
 
 	/**
-	 * Normalizes the vector to have length 1. Throws exception if magnitude is zero.
+	 * Normalizes the vector to have length 1. Throws exception if magnitude is
+	 * zero.
 	 * 
 	 * @throws ArithmeticException
 	 */
 	public void normalize() throws ArithmeticException {
-		//TODO:
+		double length = this.length();
+		if (length == 0) {
+			throw new ArithmeticException("Length is 0");
+		}
+		x /= length;
+		y /= length;
+		z /= length;
 	}
 
 	/**
@@ -179,8 +217,7 @@ public class Vec {
 	 * @return the angle in radians in the range [0,PI]
 	 */
 	public final double angle(Vec v1) {
-		//TODO:
-		return Double.NaN;
+		return Math.acos((dotProd(this, v1) / (length() * v1.length())));
 	}
 
 	/**
@@ -193,8 +230,8 @@ public class Vec {
 	 * @return Scalar
 	 */
 	static public double distance(Vec a, Vec b) {
-		//TODO:
-		return Double.NaN;
+		return Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2)
+				+ Math.pow((a.z - b.z), 2));
 	}
 
 	/**
@@ -206,9 +243,9 @@ public class Vec {
 	 *            Vector2
 	 * @return Vector1 x Vector2
 	 */
-	public static Vec crossProd(Vec a, Vec b) {	
-		//TODO: 
-		return null;
+	public static Vec crossProd(Vec a, Vec b) {
+		return new Vec(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y
+				- a.y * b.x);
 	}
 
 	/**
@@ -221,8 +258,7 @@ public class Vec {
 	 * @return a+b
 	 */
 	public static Vec add(Vec a, Vec b) {
-		//TODO:
-		return null;
+		return new Vec(a.x + b.x, a.y + b.y, a.z + b.z);
 	}
 
 	/**
@@ -235,8 +271,7 @@ public class Vec {
 	 * @return a-b
 	 */
 	public static Vec sub(Vec a, Vec b) {
-		//TODO:
-		return null;
+		return new Vec(a.x - b.x, a.y - b.y, a.z - b.z);
 	}
 
 	/**
@@ -247,8 +282,7 @@ public class Vec {
 	 * @return -1*a
 	 */
 	public static Vec negate(Vec a) {
-		//TODO:
-		return null;
+		return scale(-1, a);
 	}
 
 	/**
@@ -261,8 +295,7 @@ public class Vec {
 	 * @return s*a
 	 */
 	public static Vec scale(double s, Vec a) {
-		//TODO:
-		return null;
+		return new Vec(a.x * s, a.y * s, a.z * s);
 	}
 
 	/**
@@ -275,8 +308,7 @@ public class Vec {
 	 * @return a.*b
 	 */
 	public static Vec scale(Vec a, Vec b) {
-		//TODO:
-		return null;
+		return new Vec(a.x * b.x, a.y * b.y, a.z * b.z);
 	}
 
 	/**
@@ -289,8 +321,7 @@ public class Vec {
 	 * @return a==b
 	 */
 	public static boolean equals(Vec a, Vec b) {
-		//TODO:
-		return false;
+		return (a.x == b.x && a.y == b.y && a.z == b.z);
 	}
 
 	/**
@@ -303,8 +334,8 @@ public class Vec {
 	 * @return a.b
 	 */
 	public static double dotProd(Vec a, Vec b) {
-		//TODO:
-		return Double.NaN;
+		Vec ans = scale(a, b);
+		return (double) (ans.x + ans.y + ans.z);
 	}
 
 	/**
