@@ -42,10 +42,10 @@ public abstract class Surface implements IInitable {
 			emission = new Vec(attributes.get("mtl-emission"));
 		}
 		if (attributes.containsKey("mtl-shininess")) {
-			Double.parseDouble((attributes.get("mtl-shininess")));
+			shininess = Double.parseDouble((attributes.get("mtl-shininess")));
 		}
 		if (attributes.containsKey("mtl-reflectance")) {
-			Double.parseDouble((attributes.get("mtl-reflectance")));
+			reflectance = Double.parseDouble((attributes.get("mtl-reflectance")));
 		}
 	}
 }

@@ -25,14 +25,16 @@ public class RayTracer implements IRenderer {
 	 */
 	@Override
 	public void init(SceneDescriptor sceneDesc, int width, int height, File path) {
-		// TODO Implement this
-		//you can initialize your scene object here
-		
-		//for (Element e : sceneDesc.getObjects()) {
-		//	scene.addObjectByName(e.getName(), e.getAttributes());
-		//}
-		
-		//scene.setCameraAttributes(sceneDesc.getCameraAttributes());
+		Scene scene = new Scene();
+		scene.init(sceneDesc.getSceneAttributes());
+		for (Element e : sceneDesc.getObjects()) {
+			scene.addObjectByName(e.getName(), e.getAttributes());
+		}
+		scene.setCameraAttributes(sceneDesc.getCameraAttributes());
+		BufferedImage canvas = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		for (int i = 0; i < height; i++) {
+			renderLine(canvas, i);
+		}
 
 	}
 
@@ -47,7 +49,9 @@ public class RayTracer implements IRenderer {
 	 */
 	@Override
 	public void renderLine(BufferedImage canvas, int line) {
-		// TODO Implement this
+		for (int i = 0; i < canvas.getWidth(); i++) {
+			
+		}
 	}
 
 }

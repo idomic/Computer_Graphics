@@ -18,21 +18,52 @@ import math.Vec;
  */
 public class Scene implements IInitable {
 
-	protected List<Surface> surfaces;
-	protected List<Light> lights;
-	protected Camera camera;
+	protected List<Surface> surfaces = null;
+	protected List<Light> lights = null;
+	protected Camera camera = null;
+	protected Vec backCol = null;
+	protected String backTex = null;
+	protected double recLevel ;
+	protected Vec ambient = null;
+	protected double superSamp;
+	protected int acceleration;
 
+
+	
 
 	public Scene() {
-
-		//surfaces = new LinkedList<Surface>();
-		//lights = new LinkedList<Light>();
-		//camera = new Camera();
+		surfaces = new LinkedList<Surface>();
+		lights = new LinkedList<Light>();
+		camera = new Camera();
+		backCol = new Vec(0, 0, 0);
+		recLevel = 10;
+		ambient = new Vec(0, 0, 0);
+		superSamp = 1;
+		acceleration = 0;	
 	}
 
+	/**
+	 *  Reset the scene parameters from XML
+	 */
 	public void init(Map<String, String> attributes) {
-	
-		//TODO store xml scene properties in members (parameters just below scene in the XML)
+		if (attributes.containsKey("background-col")) {
+			backCol = new Vec(attributes.get("background-col"));
+		}
+		if (attributes.containsKey("background-tex")) {
+			backTex = attributes.get("background-tex");
+		}
+		if (attributes.containsKey("max-recursion-level")) {
+			recLevel = Double.parseDouble(attributes.get("max-recursion-level"));
+		}
+		if (attributes.containsKey("ambient-light")) {
+			ambient = new Vec(attributes.get("ambient-light"));
+		}
+		if (attributes.containsKey("super-samp-width")) {
+			superSamp = Double.parseDouble(attributes.get("super-samp-width"));
+		}
+		if (attributes.containsKey("use-acceleration")) {
+			acceleration = Integer.parseInt(attributes.get("use-acceleration"));
+		}
 	}
 
 	/**
@@ -41,7 +72,18 @@ public class Scene implements IInitable {
 	 * @param ray
 	 * @return
 	 */
-	public void findIntersection(Ray ray) {
+	public Point3D findIntersection(Ray ray) {
+		double min = Integer.MAX_VALUE;
+		Color p = new Color
+		for (Surface surface : surfaces) {
+			getClass().
+			if() {
+				
+			}
+			if(){
+				
+			}
+		}
 		//TODO find ray intersection with scene, change the output type, add whatever you need
 	}
 
@@ -61,32 +103,35 @@ public class Scene implements IInitable {
 		//here is some code example for adding a surface or a light. 
 		//you can change everything and if you don't want this method, delete it
 		
-//		Surface surface = null;
-//		Light light = null;
-//	
+		Surface surface = null;
+		Light light = null;
+	
 //		if ("sphere".equals(name))
 //			surface = new Sphere();
-//		
-//		
-//		if ("omni-light".equals(name))
-//			light = new OmniLight();
-//
-//		//adds a surface to the list of surfaces
-//		if (surface != null) {
-//			surface.init(attributes);
-//			surfaces.add(surface);
-//		}
-//		
-		//adds a light to the list of lights
-//		if (light != null) {
-//			light.init(attributes);
-//			lights.add(light);
-//		}
+		
+		// Lights objects
+		if ("omni-light".equals(name))
+			light = new omniLight();
+		if ("dir-light".equals(name))
+			light = new dirLight();
+		if ("spot-light".equals(name))
+			light = new spotLight();
+
+		//adds a surface to the list of surfaces
+		/*if (surface != null) {
+			surface.init(attributes);
+			surfaces.add(surface);
+		} */
+		
+		// adds a light to the list of lights
+		if (light != null) {
+			light.init(attributes);
+			lights.add(light);
+		}
 
 	}
 
 	public void setCameraAttributes(Map<String, String> attributes) {
-		//TODO uncomment after implementing camera interface if you like
-		//this.camera.init(attributes);
+		this.camera.init(attributes);
 	}
 }
