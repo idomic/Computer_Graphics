@@ -68,6 +68,12 @@ public class Vec {
 		y = v.y;
 		z = v.z;
 	}
+	
+	public Vec(Point3D p1, Point3D p0) {
+		this.x = p1.x - p0.x;
+		this.y = p1.y - p0.y;
+		this.z = p1.z - p0.z;
+	}
 
 	/**
 	 * Calculates the reflection of the vector in relation to a given surface

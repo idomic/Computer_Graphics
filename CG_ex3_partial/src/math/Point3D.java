@@ -14,7 +14,18 @@ public class Point3D{
 		s.close();
 	}
 
-	//TODO add methods/more constructors here
+	public Point3D(Point3D p, Vec v) {
+		this.x = p.x + v.x;
+		this.y = p.y + v.y;
+		this.z = p.z + v.z;
+	}
+	
+	public Point3D(Point3D p, Point3D p0) {
+		this.x = p.x + p0.x;
+		this.y = p.y + p0.y;
+		this.z = p.z + p0.z;
+	}
 
 }
+
 

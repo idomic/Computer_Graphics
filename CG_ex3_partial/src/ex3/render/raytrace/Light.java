@@ -9,7 +9,7 @@ import math.Vec;
  * Add methods as you wish, this can be a super class for other lights (think which)
  */
 public abstract class Light implements IInitable {
-//TODO add methods. If you don't like this class you can write your own.
+
 	protected Vec color;
 
 

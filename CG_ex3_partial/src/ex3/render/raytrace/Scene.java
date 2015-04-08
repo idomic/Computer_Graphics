@@ -18,10 +18,9 @@ import math.Vec;
  */
 public class Scene implements IInitable {
 
-//TODO add members
-	//protected List<Surface> surfaces;
-	//protected List<Light> lights;
-	//protected Camera camera;
+	protected List<Surface> surfaces;
+	protected List<Light> lights;
+	protected Camera camera;
 
 
 	public Scene() {
