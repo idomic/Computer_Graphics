@@ -1,6 +1,8 @@
 package ex3.render.raytrace;
 
 import java.util.Map;
+
+import math.Point3D;
 import math.Vec;
 
 /**
@@ -23,6 +25,8 @@ public abstract class Light implements IInitable {
 			color = new Vec(attributes.get("color"));
 		}
 	}
+	
+	public abstract Vec getDir(Point3D p);
 	
 
 	

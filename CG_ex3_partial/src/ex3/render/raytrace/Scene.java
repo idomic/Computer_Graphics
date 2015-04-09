@@ -8,13 +8,14 @@ import java.util.Scanner;
 import math.Point3D;
 import math.Ray;
 import math.Vec;
+
 /**
  * A Scene class containing all the scene objects including camera, lights and
- * surfaces. Some suggestions for code are in comment
- * If you uncomment these lines you'll need to implement some new types like Surface
+ * surfaces. Some suggestions for code are in comment If you uncomment these
+ * lines you'll need to implement some new types like Surface
  * 
- * You can change all methods here this is only a suggestion! This is your world, 
- * add members methods as you wish
+ * You can change all methods here this is only a suggestion! This is your
+ * world, add members methods as you wish
  */
 public class Scene implements IInitable {
 
@@ -23,13 +24,10 @@ public class Scene implements IInitable {
 	protected Camera camera = null;
 	protected Vec backCol = null;
 	protected String backTex = null;
-	protected double recLevel ;
+	protected double recLevel;
 	protected Vec ambient = null;
 	protected double superSamp;
 	protected int acceleration;
-
-
-	
 
 	public Scene() {
 		surfaces = new LinkedList<Surface>();
@@ -39,11 +37,11 @@ public class Scene implements IInitable {
 		recLevel = 10;
 		ambient = new Vec(0, 0, 0);
 		superSamp = 1;
-		acceleration = 0;	
+		acceleration = 0;
 	}
 
 	/**
-	 *  Reset the scene parameters from XML
+	 * Reset the scene parameters from XML
 	 */
 	public void init(Map<String, String> attributes) {
 		if (attributes.containsKey("background-col")) {
@@ -53,7 +51,8 @@ public class Scene implements IInitable {
 			backTex = attributes.get("background-tex");
 		}
 		if (attributes.containsKey("max-recursion-level")) {
-			recLevel = Double.parseDouble(attributes.get("max-recursion-level"));
+			recLevel = Double
+					.parseDouble(attributes.get("max-recursion-level"));
 		}
 		if (attributes.containsKey("ambient-light")) {
 			ambient = new Vec(attributes.get("ambient-light"));
@@ -72,43 +71,76 @@ public class Scene implements IInitable {
 	 * @param ray
 	 * @return
 	 */
-	public Point3D findIntersection(Ray ray) {
-		double min = Integer.MAX_VALUE;
-		Color p = new Color
+	public MinIntersection findIntersection(Ray ray) {
+		double min = Double.MAX_VALUE;
+		Surface min_surface = null;
+
+		// For each surface check for nearest intersection.
 		for (Surface surface : surfaces) {
-			getClass().
-			if() {
-				
-			}
-			if(){
-				
+			double curDist = surface.Intersect(ray);
+			if (curDist < min) {
+				min_surface = surface;
+				min = curDist;
 			}
 		}
-		//TODO find ray intersection with scene, change the output type, add whatever you need
+		// In case of no intersection
+		if (min == Double.MAX_VALUE) {
+			return null;
+		}
+		Point3D intersection = new Point3D(ray.p, Vec.scale(min, ray.v));
+
+		// In case intersection was found
+		return new MinIntersection(intersection, min_surface, min);
 	}
 
-	public Vec calcColor(Ray ray, int level) {
-		//TODO implement ray tracing recursion here, add whatever you need
-		return null;
+	public Vec calcColor(Ray ray, int curLevel, MinIntersection intersection) {
+		if(recLevel >= curLevel) {
+			return new Vec(0,0,0);
+		}
+		if(intersection == null) {
+			return this.backCol;
+		}
+		Point3D intersectionPoint = intersection.intersectionPoint;
+		Surface surface = intersection.minSurface;
+		
+		// Ambient and Emission calculations
+		Vec Ie = new Vec(surface.emission);
+		Vec kaIa = Vec.scale(surface.ambient, this.ambient);
+		Vec color = Vec.add(Ie, kaIa);
+		
+		// Diffuse & Specular calculations
+		for (int i = 0; i < lights.size(); i++) {
+			Light light = lights.get(i);
+			Vec Kd = surface.diffuse;
+			double NdotLi = Vec.dotProd(surface.normal(intersectionPoint),light.getDir(intersectionPoint));
+			Vec diffuse = Vec.scale(NdotLi, Kd);
+			Vec Ks = surface.specular;
+			Vec Ri = light.getDir(intersectionPoint).reflect(surface.normal(intersectionPoint));
+			double VdotRi = Vec.dotProd(ray.v, Ri);
+			double VdotRipowN = Math.pow(VdotRi, surface.shininess);
+			Vec specular = Vec.scale(VdotRipowN, Ks);
+			color.add(diffuse);
+			color.add(specular);
+		}
+		return color;
 	}
 
 	/**
 	 * Add objects to the scene by name
 	 * 
-	 * @param name Object's name
-	 * @param attributes Object's attributes
+	 * @param name
+	 *            Object's name
+	 * @param attributes
+	 *            Object's attributes
 	 */
 	public void addObjectByName(String name, Map<String, String> attributes) {
-		//TODO this adds all objects to scene except the camera
-		//here is some code example for adding a surface or a light. 
-		//you can change everything and if you don't want this method, delete it
-		
+
 		Surface surface = null;
 		Light light = null;
-	
-//		if ("sphere".equals(name))
-//			surface = new Sphere();
-		
+
+		if ("sphere".equals(name))
+			surface = new sphere();
+
 		// Lights objects
 		if ("omni-light".equals(name))
 			light = new omniLight();
@@ -117,13 +149,13 @@ public class Scene implements IInitable {
 		if ("spot-light".equals(name))
 			light = new spotLight();
 
-		//adds a surface to the list of surfaces
-		/*if (surface != null) {
+		// Adds a surface to the list of surfaces
+		if (surface != null) {
 			surface.init(attributes);
 			surfaces.add(surface);
-		} */
-		
-		// adds a light to the list of lights
+		}
+
+		// Adds a light to the list of lights
 		if (light != null) {
 			light.init(attributes);
 			lights.add(light);

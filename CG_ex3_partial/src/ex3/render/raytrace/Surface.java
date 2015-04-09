@@ -1,6 +1,9 @@
 package ex3.render.raytrace;
 
 import java.util.Map;
+
+import math.Point3D;
+import math.Ray;
 import math.Vec;
 
 /**
@@ -48,4 +51,14 @@ public abstract class Surface implements IInitable {
 			reflectance = Double.parseDouble((attributes.get("mtl-reflectance")));
 		}
 	}
+	
+	/**
+	 * This method calculates the nearest intersection point ray - object.
+	 * If no intersection return Integer.MAX_VALUE.
+	 * @param ray
+	 * @return the ray's distance to the object
+	 */
+	public abstract double Intersect(Ray ray);
+	
+	public abstract Vec normal(Point3D p);
 }

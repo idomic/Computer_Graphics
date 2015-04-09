@@ -55,7 +55,6 @@ public class Camera implements IInitable {
 
 	public Ray constructRayThroughPixel(double x, double y, double height,
 			double width) {
-		// Point3D p1 = new Point3D(eye, Vec.scale(screenDist, direction));
 		if (direction == null && lookAt == null) {
 			System.err.println("insuficient data for camera");
 		} else if (direction == null) {

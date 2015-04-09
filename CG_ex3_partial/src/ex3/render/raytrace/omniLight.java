@@ -26,4 +26,10 @@ public class omniLight extends Light {
 			attenuation = new Point3D(attributes.get("attenuation"));
 		}	
 	}
+
+	public Vec getDir(Point3D p) {
+		Vec ans = new Vec(p, pos);
+		ans.normalize();
+		return ans;
+	}
 }

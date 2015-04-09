@@ -7,7 +7,7 @@ import math.Vec;
 
 public class dirLight extends Light {
 
-	protected Point3D direction = null;
+	protected Vec direction = null;
 
 	public dirLight() {
 		super.color = new Vec(1, 1, 1);
@@ -17,7 +17,12 @@ public class dirLight extends Light {
 	public void init(Map<String, String> attributes) {
 		super.init(attributes);
 		if (attributes.containsKey("direction")) {
-			direction = new Point3D(attributes.get("direction"));
+			direction = new Vec(attributes.get("direction"));
 		}
+	}
+
+	@Override
+	public Vec getDir(Point3D p) {
+		return Vec.negate(direction);
 	}
 }
