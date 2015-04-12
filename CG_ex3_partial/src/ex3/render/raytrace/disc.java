@@ -3,6 +3,7 @@ package ex3.render.raytrace;
 import java.util.Map;
 
 import math.Point3D;
+import math.Ray;
 import math.Vec;
 
 public class disc extends Surface {
@@ -31,6 +32,18 @@ public class disc extends Surface {
 		if (attributes.containsKey("normal")){
 			normal = new Point3D(attributes.get("normal"));
 		}	
+	}
+
+	@Override
+	public double Intersect(Ray ray) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Vec normal(Point3D p) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
