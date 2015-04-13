@@ -15,6 +15,7 @@ public class Camera implements IInitable {
 	protected Vec direction = null;
 	protected Point3D lookAt = null;
 	protected Vec upDirection = null;
+	protected Vec rightDirection = null;
 	protected double screenDist;
 	protected double screenWidth;
 
@@ -55,6 +56,8 @@ public class Camera implements IInitable {
 
 	public Ray constructRayThroughPixel(double x, double y, double height,
 			double width) {
+		rightDirection = Vec.crossProd(upDirection, direction);
+		
 		if (direction == null && lookAt == null) {
 			System.err.println("insuficient data for camera");
 		} else if (direction == null) {

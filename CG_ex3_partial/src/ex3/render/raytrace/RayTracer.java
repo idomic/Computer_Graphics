@@ -1,14 +1,27 @@
 package ex3.render.raytrace;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
+import com.sun.medialib.mlib.Image;
+
+import math.Ray;
+import sun.reflect.generics.repository.ConstructorRepository;
 import ex3.parser.Element;
 import ex3.parser.SceneDescriptor;
 import ex3.render.IRenderer;
 
 public class RayTracer implements IRenderer {
-
+	
+	protected Scene scene;
+	protected int width;
+	protected int height;
+	protected File path;
+	protected BufferedImage image;
 	/**
 	 * Inits the renderer with scene description and sets the target canvas to
 	 * size (width X height). After init renderLine may be called
@@ -25,16 +38,24 @@ public class RayTracer implements IRenderer {
 	 */
 	@Override
 	public void init(SceneDescriptor sceneDesc, int width, int height, File path) {
-		Scene scene = new Scene();
+		scene = new Scene();
+		this.path = path;
+		this.height = height;
+		this.width = width;
 		scene.init(sceneDesc.getSceneAttributes());
+		if(this.scene.backTex != null) {
+			image = null;
+			File imageFile = new File(this.path.getParent() + File.separator + this.scene.backTex);
+			try {
+				image = ImageIO.read(imageFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}	
+		}
 		for (Element e : sceneDesc.getObjects()) {
 			scene.addObjectByName(e.getName(), e.getAttributes());
 		}
 		scene.setCameraAttributes(sceneDesc.getCameraAttributes());
-		BufferedImage canvas = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		for (int i = 0; i < height; i++) {
-			renderLine(canvas, i);
-		}
 
 	}
 
@@ -50,8 +71,29 @@ public class RayTracer implements IRenderer {
 	@Override
 	public void renderLine(BufferedImage canvas, int line) {
 		for (int i = 0; i < canvas.getWidth(); i++) {
-			
+			canvas.setRGB(i, line, castRay(i,line).getRGB());
 		}
+	}
+
+	protected Color castRay(int x, int y) {
+		Color ans = null;
+		
+		// Constructing the ray through the center of a pixel.
+		Ray ray = scene.camera.constructRayThroughPixel(x, y, height, width);
+		
+		// Find intersection with the scene
+		MinIntersection intersection = scene.findIntersection(ray);
+		
+		// If no intersection try background image or background color.
+		if(intersection == null) {
+			if(image == null) {
+				return scene.backCol.Vec2Color();
+			} else { 
+				return new Color(image.getRGB(x, y));
+			}
+		}
+		
+		return scene.calcColor(ray, 0, intersection).Vec2Color();
 	}
 
 }

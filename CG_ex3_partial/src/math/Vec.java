@@ -1,6 +1,9 @@
 package math;
 
+import java.awt.Color;
 import java.util.Scanner;
+
+import com.sun.org.apache.bcel.internal.classfile.Code;
 
 /**
  * 3D vector class that contains three doubles. Could be used to represent
@@ -109,6 +112,24 @@ public class Vec {
 		x -= a.x;
 		y -= a.y;
 		z -= a.z;
+	}
+	
+	/**
+	 * This method creates a Color type from a Vector.
+	 * @return Color
+	 */
+	public Color Vec2Color() {
+		float r =1, g=1, b=1;
+		if(this.x < 1.0) {
+			r = (float)this.x;
+		}
+		if(this.y < 1.0) {
+			g = (float)this.y;
+		}
+		if(this.z < 1.0) {
+			b = (float)this.z;
+		}
+		return new Color(r,g,b);
 	}
 
 	/**
