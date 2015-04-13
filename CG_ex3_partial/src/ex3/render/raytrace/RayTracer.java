@@ -7,10 +7,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.sun.medialib.mlib.Image;
+//import com.sun.medialib.mlib.Image;
 
 import math.Ray;
-import sun.reflect.generics.repository.ConstructorRepository;
+//import sun.reflect.generics.repository.ConstructorRepository;
 import ex3.parser.Element;
 import ex3.parser.SceneDescriptor;
 import ex3.render.IRenderer;
@@ -76,7 +76,6 @@ public class RayTracer implements IRenderer {
 	}
 
 	protected Color castRay(int x, int y) {
-		Color ans = null;
 		
 		// Constructing the ray through the center of a pixel.
 		Ray ray = scene.camera.constructRayThroughPixel(x, y, height, width);

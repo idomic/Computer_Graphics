@@ -63,16 +63,12 @@ public class sphere extends Surface {
 		// The distance from radius to intersection points.
 		// If there is one intersection point.
 		double th = Math.sqrt(dRadius - dDist);
-		if (Math.sqrt(dDist) == radius) {
+		if (th == 0) {
 			return proj;
 		} else {
 			
 			// Get the minimal distance intersection point.
-			if (proj - th < proj + th) {
 				return (proj - th);
-			} else {
-				return (proj + th);
-			}
 		}
 	}
 
