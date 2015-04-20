@@ -193,7 +193,7 @@ public class Scene implements IInitable {
 
 		// Calculate KrIr recursively as needed and add it to I.
 		I.mac(Kr,
-				calcColor(reflectionHit, reflectionRay, curLevel));
+				calcColor(reflectionRay, curLevel, reflectionHit));
 
 		return I;
 	
