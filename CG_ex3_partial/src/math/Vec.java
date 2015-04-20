@@ -244,7 +244,7 @@ public class Vec {
 	 * @return the angle in radians in the range [0,PI]
 	 */
 	public final double angle(Vec v1) {
-		return Math.acos((dotProd(this, v1) / (length() * v1.length())));
+		return Math.acos((dotProd(this, v1) / (this.length() * v1.length())));
 	}
 
 	/**
