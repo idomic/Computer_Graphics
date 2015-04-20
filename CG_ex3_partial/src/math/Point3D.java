@@ -56,6 +56,16 @@ public class Point3D{
 		this.y += a.y;
 		this.z += a.z;
 	}
+	
+	/**
+	 * Convert the point to its vector radius (the vector from origin to the
+	 * point).
+	 * 
+	 * @return Vector
+	 */
+	public Vec convertToVec() {
+		return (new Vec(this.x, this.y, this.z));
+	}
 
 
 }

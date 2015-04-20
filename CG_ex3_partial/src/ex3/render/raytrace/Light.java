@@ -26,7 +26,19 @@ public abstract class Light implements IInitable {
 		}
 	}
 	
+	public abstract Vec getColor(Point3D point);
+
 	public abstract Vec getDir(Point3D p);
+	
+	/**
+	 * Return the shadow value of that point that is caused by that light
+	 * source.
+	 * 
+	 * @param point
+	 * @param hitDistance
+	 * @return shadow value
+	 */
+	public abstract double getShadow(Point3D point, double hitDistance);
 	
 
 	
