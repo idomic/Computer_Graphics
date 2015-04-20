@@ -60,10 +60,10 @@ public class Camera implements IInitable {
 //			upDirection = new Vec(attributes.get("up-direction"));
 //		}
 		if (attributes.containsKey("screen-dist")) {
-			Double.parseDouble(attributes.get("screen-dist"));
+			screenDist = Double.parseDouble(attributes.get("screen-dist"));
 		}
 		if (attributes.containsKey("screen-width")) {
-			Double.parseDouble(attributes.get("screen-width"));
+			screenWidth = Double.parseDouble(attributes.get("screen-width"));
 		}
 	}
 
