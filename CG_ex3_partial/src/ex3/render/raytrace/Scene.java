@@ -134,13 +134,50 @@ public class Scene implements IInitable {
 	 *            Object's attributes
 	 */
 	public void addObjectByName(String name, Map<String, String> attributes) {
-
+		Scanner scan = null;
 		Surface surface = null;
 		Light light = null;
 
 		if ("sphere".equals(name))
 			surface = new sphere();
 
+		if ("disc".equals(name)) {
+			surface = new disc();
+		}
+		
+		if ("trimesh".equals(name)) {
+			for (String key : attributes.keySet()) {
+				if (key.startsWith("tri")) {
+					// The triangle 3 points are given in 3 coordinates each.
+					double triP0x, triP0y, triP0z;
+					double triP1x, triP1y, triP1z;
+					double triP2x, triP2y, triP2z;
+					Point3D p1, p2, p3;
+					Triangle triangle;
+
+					scan = new Scanner(attributes.get(key));
+					triP0x = scan.nextDouble();
+					triP0y = scan.nextDouble();
+					triP0z = scan.nextDouble();
+					p1 = new Point3D(triP0x, triP0y, triP0z);
+
+					triP1x = scan.nextDouble();
+					triP1y = scan.nextDouble();
+					triP1z = scan.nextDouble();
+					p2 = new Point3D(triP1x, triP1y, triP1z);
+
+					triP2x = scan.nextDouble();
+					triP2y = scan.nextDouble();
+					triP2z = scan.nextDouble();
+					p3 = new Point3D(triP2x, triP2y, triP2z);
+
+					triangle = new Triangle(p1, p2, p3);
+					triangle.init(attributes);
+					this.surfaces.add(triangle);
+				}
+			}
+		}
+			
 		// Lights objects
 		if ("omni-light".equals(name))
 			light = new omniLight();

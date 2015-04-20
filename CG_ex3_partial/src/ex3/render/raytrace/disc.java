@@ -42,6 +42,7 @@ public class disc extends Surface {
 
 	@Override
 	public double Intersect(Ray ray) {
+		double inf = Double.MAX_VALUE;
 		Point3D pos = ray.p;
 		Vec rayDirection = ray.v;
 
@@ -57,7 +58,7 @@ public class disc extends Surface {
 		// Check that the point is in the disc and not just in the plain.
 		// If the distance from the center is larger than the radius.
 		if (Point3D.vecFromSub2Points(intersectionPoint, this.center).length() > this.radius) {
-			return Double.POSITIVE_INFINITY;
+			return inf;
 		}
 
 		// Get the distance from the ray origin to the intersection point and if
@@ -67,8 +68,8 @@ public class disc extends Surface {
 
 		// Check that the ray is in the direction of the front side of the disc
 		// .Both ray.v and the normal are normalize so we get the cos(angle).
-		if (Vec.dotProd(rayDirection, this.normal) >= 0) {
-			return Double.POSITIVE_INFINITY;
+		if (Vec.dotProd(rayDirection, normal) >= 0) {
+			return inf;
 		}
 		return distance;
 

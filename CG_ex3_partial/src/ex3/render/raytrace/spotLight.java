@@ -16,22 +16,25 @@ public class spotLight extends omniLight {
 	
 	@Override
 	public Vec getColor(Point3D point) {
+		
 		// lightToPoint is "L" from the class slides.
-		Vec lightToPoint = Point3D.vecFromSub2Points(this.pos, point);
+		Vec lightToPoint = Point3D.vecFromSub2Points(pos, point);
+		
 		// distance is "d" from class slides.
 		double distance = lightToPoint.length();
 		lightToPoint.normalize();
 
-		double LD = -Vec.dotProd(lightToPoint, this.direction);
+		double LD = -(Vec.dotProd(lightToPoint, direction));
+		
 		// Check if the point is behind us will return a (0,0,0) color.
 		if (LD <= 0) {
 			return new Vec(0, 0, 0);
 		}
 
 		double lightCoefficient = LD
-				/ (this.kc + this.kl * distance + this.kq * distance * distance);
+				/ (kc + kl * distance + kq * distance * distance);
 
-		return Vec.scale(lightCoefficient, this.color);
+		return Vec.scale(lightCoefficient, color);
 	}
 	
 	@Override

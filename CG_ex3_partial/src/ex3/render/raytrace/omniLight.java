@@ -42,15 +42,17 @@ public class omniLight extends Light {
 	
 	@Override
 	public Vec getColor(Point3D point) {
+		
 		// lightToPoint is "L" from the class slides.
 		Vec lightToPoint = Point3D.vecFromSub2Points(this.pos, point);
+		
 		// distance is "d" from class slides.
 		double distance = lightToPoint.length();
 
-		double lightCoefficient = 1 / (this.kc + this.kl * distance + this.kq
+		double lightCoefficient = 1 / (kc + kl * distance + kq
 				* distance * distance);
 		
-		return Vec.scale(lightCoefficient, this.color);
+		return Vec.scale(lightCoefficient, color);
 	}
 
 	public Vec getDir(Point3D p) {
