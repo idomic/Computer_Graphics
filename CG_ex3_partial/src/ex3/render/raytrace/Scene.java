@@ -87,13 +87,12 @@ public class Scene implements IInitable {
 			return null;
 		}
 		Point3D intersection = new Point3D(ray.p, Vec.scale(min, ray.v));
-
-		// In case intersection was found
+		// In case intersection was found:
 		return new MinIntersection(intersection, min_surface, min);
 	}
 
 	public Vec calcColor(Ray ray, int curLevel, MinIntersection intersection) {
-		if(recLevel >= curLevel) {
+		if(recLevel == curLevel) {
 			return new Vec(0,0,0);
 		}
 		// If no intersection, chose background color
@@ -152,8 +151,8 @@ public class Scene implements IInitable {
 				Si = light.getShadow(intersectionPoint,rayNearestIntersection.dist);
 			}
 
-			// The calculation is needed only if Si is not 0.
-			if (Si != 0) {
+			// Shadow - ray is not blocked
+			if (Si != 0) { 
 				SigmaColor = new Vec();
 
 				double NdotLi = Vec.dotProd(N, Li);
@@ -193,7 +192,7 @@ public class Scene implements IInitable {
 
 		// Calculate KrIr recursively as needed and add it to I.
 		I.mac(Kr,
-				calcColor(reflectionHit, reflectionRay, curLevel));
+				calcColor(reflectionRay, curLevel, reflectionHit));
 
 		return I;
 	
