@@ -66,8 +66,7 @@ public class sphere extends Surface {
 		if (th == 0) {
 			return proj;
 		} else {
-			
-			// Get the minimal distance intersection point.
+				// Get the minimal distance intersection point.
 				return (proj - th);
 		}
 	}
