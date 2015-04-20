@@ -20,9 +20,21 @@ public class dirLight extends Light {
 			direction = new Vec(attributes.get("direction"));
 		}
 	}
+	
+	@Override
+	public Vec getColor(Point3D point) {
+		return this.color;
+	}
 
 	@Override
 	public Vec getDir(Point3D p) {
 		return Vec.negate(direction);
+	}
+	
+	@Override
+	public double getShadow(Point3D point, double paramDouble) {
+		
+		// A direcional light has no shadow therefore will retun 1.
+		return 1;
 	}
 }

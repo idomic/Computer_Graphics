@@ -78,7 +78,7 @@ public class Scene implements IInitable {
 		// For each surface check for nearest intersection.
 		for (Surface surface : surfaces) {
 			double curDist = surface.Intersect(ray);
-			if (curDist < min) {
+			if ((curDist < min) && (curDist > Ray.eps)) {
 				min_surface = surface;
 				min = curDist;
 			}
