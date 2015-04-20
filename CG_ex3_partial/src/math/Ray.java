@@ -6,6 +6,9 @@ package math;
  * TODO Remove the comments
  */
 public class Ray {
+	
+	/** Epsilon value */
+	public static final double eps = 10e-5;
 
 	// point of origin
 	 public Point3D p;
