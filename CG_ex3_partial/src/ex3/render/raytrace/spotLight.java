@@ -9,9 +9,13 @@ public class spotLight extends omniLight {
 
 	protected Vec direction = null;
 	
+	// The attenuation variables.
+		protected double kc = 1;
+		protected double kl = 0;
+		protected double kq = 0;
+	
 	public spotLight() {
 		super.color = new Vec(1,1,1);
-		super.attenuation = new Point3D("1 0 0");
 	}
 	
 	@Override
@@ -43,6 +47,16 @@ public class spotLight extends omniLight {
 		if (attributes.containsKey("direction")){
 			direction = new Vec(attributes.get("direction"));
 		}
+		if (attributes.containsKey("kc")) {
+			kc = new Double(attributes.get("kc")).doubleValue();
+		}
+		if (attributes.containsKey("kl")) {
+			kl = new Double(attributes.get("kl")).doubleValue();
+		}
+		if (attributes.containsKey("kq")) {
+			kq = new Double(attributes.get("kq")).doubleValue();
+		}
+		super.attenuation = new Point3D(kc, kl, kq);
 		direction.normalize();
 	}
 }

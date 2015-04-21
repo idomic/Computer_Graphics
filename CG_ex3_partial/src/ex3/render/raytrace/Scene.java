@@ -93,7 +93,7 @@ public class Scene implements IInitable {
 	}
 
 	public Vec calcColor(Ray ray, int curLevel, MinIntersection intersection) {
-		if(recLevel >= curLevel) {
+		if(recLevel == curLevel) {
 			return new Vec(0,0,0);
 		}
 		// If no intersection, chose background color
