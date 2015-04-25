@@ -92,13 +92,9 @@ public class Scene implements IInitable {
 	}
 
 	public Vec calcColor(Ray ray, int curLevel, MinIntersection intersection) {
-<<<<<<< HEAD
 		if(recLevel == curLevel) {
 			return new Vec(0,0,0);
-=======
-		if (recLevel == curLevel) {
-			return new Vec(0, 0, 0);
->>>>>>> origin/master
+
 		}
 		// If no intersection, chose background color
 		if (intersection == null) {
@@ -134,8 +130,7 @@ public class Scene implements IInitable {
 		Vec Ii = new Vec();
 
 		// I = Emission + Ambient
-		Vec I = new Vec();
-		Vec.add(Ie, kaIa);
+		Vec I = Vec.add(Ie, kaIa);
 		Vec SigmaColor;
 		Light light;
 
@@ -196,12 +191,7 @@ public class Scene implements IInitable {
 		curLevel++;
 
 		// Calculate KrIr recursively as needed and add it to I.
-<<<<<<< HEAD
-		I.mac(Kr,
-				calcColor(reflectionRay, curLevel, reflectionHit));
-=======
 		I.mac(Kr, calcColor(reflectionRay, curLevel, reflectionHit));
->>>>>>> origin/master
 
 		return I;
 

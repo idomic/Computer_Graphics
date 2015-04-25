@@ -17,6 +17,7 @@ public class omniLight extends Light {
 	protected double kq = 0;
 
 	public omniLight() {
+		pos = new Point3D(0, 0, 0);
 		super.color = new Vec(1, 1, 1);
 	}
 
