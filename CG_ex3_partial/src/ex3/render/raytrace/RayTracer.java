@@ -71,12 +71,37 @@ public class RayTracer implements IRenderer {
 	 */
 	@Override
 	public void renderLine(BufferedImage canvas, int line) {
-		for (int i = 0; i < canvas.getWidth(); i++) {
-			canvas.setRGB(i, line, castRay(i,line).getRGB());
+		for (int i = 0; i < width; i++) {
+			canvas.setRGB(i, line, castRay(i, line).getRGB());
 		}
+//		double scaleHeightFactor = 1.0;
+//		double scaleWidthFactor = 1.0;
+//		if (image != null)
+//		{
+//			scaleHeightFactor = image.getHeight() / height;
+//			scaleWidthFactor = image.getWidth() / width;
+//		
+//		
+//		
+//		}
+//			for (int i = 0; i < canvas.getWidth(); i++) {
+//				if (castRay(i, line) == null) {
+//					canvas.setRGB(i, line, image.getRGB((int)(i * scaleWidthFactor), (int)(line * scaleHeightFactor)));
+//				} else {
+//					canvas.setRGB(i, line, castRay(i, line).getRGB());
+//				}
+//			}
+//		
 	}
 
 	protected Color castRay(int x, int y) {
+		double scaleHeightFactor = 1.0;
+		double scaleWidthFactor = 1.0;
+		if (image != null)
+		{
+			scaleHeightFactor = image.getHeight() / height;
+			scaleWidthFactor = image.getWidth() / width;		
+		}
 		
 		// Constructing the ray through the center of a pixel.
 		Ray ray = scene.camera.constructRayThroughPixel(x, y, height, width);
@@ -89,13 +114,12 @@ public class RayTracer implements IRenderer {
 			if(image == null) {
 				return scene.backCol.Vec2Color();
 			} else { 
-				return new Color(image.getRGB(x, y));
+				return new Color(image.getRGB((int)(x * scaleWidthFactor), (int)(y * scaleHeightFactor)));
 			}
 		}
 		
 		if (scene.superSamp > 1)
 		{
-			
 			Vec color = new Vec();
 			for (int i = 0; i < scene.superSamp; i++) {
 				for (int j = 0; j < scene.superSamp; j++)
