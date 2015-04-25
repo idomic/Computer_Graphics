@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 //import com.sun.medialib.mlib.Image;
 
 import math.Ray;
+import math.Vec;
 //import sun.reflect.generics.repository.ConstructorRepository;
 import ex3.parser.Element;
 import ex3.parser.SceneDescriptor;
@@ -92,6 +93,24 @@ public class RayTracer implements IRenderer {
 			}
 		}
 		
+		if (scene.superSamp > 1)
+		{
+			
+			Vec color = new Vec();
+			for (int i = 0; i < scene.superSamp; i++) {
+				for (int j = 0; j < scene.superSamp; j++)
+				{
+					Ray newRay = this.scene.camera.constructRayThroughPixel(x + i / this.scene.superSamp, 
+							y + j / this.scene.superSamp, height, width);
+					MinIntersection newIntersection = this.scene.findIntersection(newRay, false);
+					Vec subcolor = this.scene.calcColor(newRay, 0, newIntersection);
+					color.add(subcolor);
+				}
+			}
+			color.scale(1.0D / Math.pow(this.scene.superSamp, 2.0D));
+			return color.Vec2Color();
+		}
+
 		return scene.calcColor(ray, 0, intersection).Vec2Color();
 	}
 
