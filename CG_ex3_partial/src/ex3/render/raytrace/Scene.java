@@ -235,13 +235,7 @@ public class Scene implements IInitable {
 		if ("convexpolygon".equals(name)) {
 			
 			// Scan triangle's 3 points which given in 3 coordinates each.
-			Point3D p0, p1, p2, p3;
-
-			p0 = new Point3D(attributes.get("p0"));
-			p1 = new Point3D(attributes.get("p1"));
-			p2 = new Point3D(attributes.get("p2"));
-			p3 = new Point3D(attributes.get("p3"));
-			poligon = new convexPoligon(p0, p1, p2, p3);
+			poligon = new convexPoligon();
 			poligon.init(attributes);
 			surfaces.add(poligon);
 		}

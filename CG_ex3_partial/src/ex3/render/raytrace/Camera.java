@@ -28,9 +28,6 @@ public class Camera implements IInitable {
 		if (attributes.containsKey("eye")) {
 			eye = new Point3D(attributes.get("eye"));
 		}
-//		if (attributes.containsKey("direction")) {
-//			direction = new Vec(attributes.get("direction"));
-//		}
 		if (attributes.containsKey("look-at")) {
 			lookAt = new Point3D((String)attributes.get("look-at"));
 			direction = Point3D.vecFromSub2Points(lookAt, eye);
@@ -40,9 +37,7 @@ public class Camera implements IInitable {
 			lookAt = Point3D.pointAtEndOfVec(eye, 1, direction);
 			direction.normalize();
 		}
-//		if (attributes.containsKey("look-at")) {
-//			lookAt = new Point3D(attributes.get("look-at"));
-//		}
+
 		
 		// Set the given up direction.
 		if (attributes.containsKey("up-direction")) {
@@ -55,10 +50,6 @@ public class Camera implements IInitable {
 				upDirection.normalize();
 			}
 		}
-
-//		if (attributes.containsKey("up-direction")) {
-//			upDirection = new Vec(attributes.get("up-direction"));
-//		}
 		if (attributes.containsKey("screen-dist")) {
 			screenDist = Double.parseDouble(attributes.get("screen-dist"));
 		}
@@ -95,17 +86,6 @@ public class Camera implements IInitable {
 		// Calculate the vector from the camera eye that goes throw the pixel.
 		Vec directionToPixel = Point3D.vecFromSub2Points(pixel,eye);
 		directionToPixel.normalize();
-
 		return new Ray(eye, directionToPixel);
-
-		
-//		rightDirection = Vec.crossProd(upDirection, direction);
-//		
-//		if (direction == null && lookAt == null) {
-//			System.err.println("insuficient data for camera");
-//		} else if (direction == null) {
-//			direction = new Vec(eye, lookAt);
-//		}
-//		return new Ray(eye, direction);
 	}
 }

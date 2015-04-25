@@ -66,8 +66,17 @@ public class Point3D{
 	public Vec convertToVec() {
 		return (new Vec(this.x, this.y, this.z));
 	}
-
-
+	
+	/**
+	 * 
+	 * @param s
+	 * @param a
+	 */
+	public void mac(double s, Vec a) {
+		x += s * a.x;
+		y += s * a.y;
+		z += s * a.z;
+	}
 }
 
 
