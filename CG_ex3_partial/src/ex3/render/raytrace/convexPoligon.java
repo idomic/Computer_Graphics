@@ -1,119 +1,177 @@
 package ex3.render.raytrace;
 
+import java.util.LinkedList;
 import java.util.Map;
-
+import java.util.SortedSet;
+import java.util.TreeSet;
 import math.Point3D;
 import math.Ray;
 import math.Vec;
 
 public class convexPoligon extends Surface {
-	
-	protected Point3D p0;
-	protected Point3D p1;
-	protected Point3D p2;
-	protected Point3D p3;
-	private Vec normal;
+	protected LinkedList<Point3D> pts;
+	protected int n;
+	protected Vec normal;
+	protected boolean backFace = false;
 
-	/* Vectors of the rectangle sides direction */
-	private Vec vecSide1;
-	private Vec vecSide2;
-
-	/* The rectangle sides lengths. */
-	private double side1Length;
-	private double side2Length;
-	
-	public convexPoligon(Point3D p0, Point3D p1, Point3D p2, Point3D p3) {
-		this.p0 = p0;
-		this.p1 = p1;
-		this.p2 = p2;
-		this.p3 = p3;
-		vecSide1 = Point3D.vecFromSub2Points(this.p1, this.p0);
-		side1Length = vecSide1.length();
-		vecSide1.normalize();
-		vecSide2 = Point3D.vecFromSub2Points(this.p2, this.p0);
-		side2Length = vecSide2.length();
-		vecSide2.normalize();
-
-		// Checks whether the 3 points creates a legal rectangle (The vector
-		// between them are orthogonal).
-		/*if (vecSide1.dotProd(vecSide2) != 0) {
-			System.err.println("The given points are not of a rectangle");
-		}*/
-
-		// Calculate the last (fourth) point of the rectangle.
-		this.p3 = Point3D.pointAtEndOfVec(this.p1, this.side2Length,
-				this.vecSide2);
-
-		// Calculate the normal to the plain on which the rectangle is on.
-		this.normal = Vec.crossProd(this.vecSide1, this.vecSide2);
-		this.normal.normalize();
+	 public convexPoligon()
+	  {
+	  }
+	 
+	public convexPoligon(LinkedList<Point3D> pts)
+			throws IllegalArgumentException {
+		pts = new LinkedList();
+		this.n = pts.size();
+		for (Point3D p : pts)
+			this.pts.add(p);
+		if (!isPlanar())
+			throw new IllegalArgumentException("not planar polygon");
+		if (!isConvex())
+			throw new IllegalArgumentException("not convex polygon");
+		normal(pts.getFirst());
 	}
 
-	@Override
-	public void init(Map<String, String> attributes) {
-		
-		// Initialize the material attributes.
-		super.init(attributes);
-		if (attributes.containsKey("p0")) {
-			p0 = new Point3D(attributes.get("p0"));
-		}
-		if (attributes.containsKey("p1")) {
-			p1 = new Point3D(attributes.get("p1"));
-		}
-		if (attributes.containsKey("p2")) {
-			p2 = new Point3D(attributes.get("p2"));
-		}
-		if (attributes.containsKey("p3")) {
-			p3 = new Point3D(attributes.get("p3"));
-		}
-	}
-
-	@Override
 	public double Intersect(Ray ray) {
-		double inf = Double.MAX_VALUE;
-		Point3D pos = ray.p;
-		Vec direction = ray.v;
-		Point3D intersectionPos;
-		Vec intersectionDirection;
-
-		// The "t" from the plane - ray intersection from class.
-		double intersectionDistance;
-
-		// Check that the ray direction is in the face of the triangle.
-		// (direction and normal are already normalized).
-		if (Vec.dotProd(direction, this.normal) >= 0) {
+		Double inf = Double.MAX_VALUE;
+		Vec faceNormal = new Vec();
+		if (backFace)
+			faceNormal = Vec.negate(this.normal);
+		else {
+			faceNormal = this.normal;
+		}
+		Point3D intersectionPoint = findRayPlaneIntersection((Point3D) pts.getFirst(), faceNormal, ray);
+		if (intersectionPoint == null) {
 			return inf;
 		}
+		double totalLength = Point3D.vecFromSub2Points(intersectionPoint, ray.p).length();
+		if (totalLength < Ray.eps) {
+			return inf;
+		}
+		if (rayIntersectionPointInPolygon(intersectionPoint, ray, backFace)) {
+			return totalLength;
+		}
+		return inf;
+	}
 
-		// Get the intersection distance.
-		intersectionDistance = Point3D.vecFromSub2Points(this.p1, pos)
-				.dotProd(this.normal) / ray.v.dotProd(this.normal);
+	public Vec normalAt(Point3D intersection, Ray ray) {
+		return this.normal;
+	}
 
-		intersectionPos = Point3D.pointAtEndOfVec(pos,
-				intersectionDistance, direction);
-		intersectionDirection = Point3D.vecFromSub2Points(intersectionPos,
-				pos);
+	public void init(Map<String, String> attributes)
+			throws IllegalArgumentException {
+		pts = new LinkedList();
+		SortedSet<String> keys = new TreeSet<String>(attributes.keySet());
+		for (String key : keys) {
+			if ((key.startsWith("p") & key.length() == 2)) {
+				this.pts.add(new Point3D((String) attributes.get(key)));
+			}
+		}
+		this.n = this.pts.size();
+		if (!isPlanar())
+			throw new IllegalArgumentException("Error! Not planar polygon");
+		if (!isConvex()) {
+			throw new IllegalArgumentException("Error! Not convex polygon");
+		}
+		normal(pts.getFirst());
+		super.init(attributes);
+	}
 
-		// Gets the projection of the new vector on according to the plain
-				// vectors
-				// if the projections are between 0 and the original length of the
-				// vectors it means that the point is on the Rectangular Plane.
-				double projectV1 = Vec.dotProd(intersectionDirection,
-						this.vecSide1);
-				double projectV2 = Vec.dotProd(intersectionDirection,
-						this.vecSide2);
-				if (projectV1 >= 0 && projectV2 >= 0 && projectV1 <= this.side1Length
-						&& projectV2 <= this.side2Length) {
-					return intersectionDistance;
-				} else {
-					return inf;
-				}
-				}
+	protected boolean isConvex() {
+		for (int pInd = 1; pInd < this.n - 1; pInd++) {
+			Vec edge1 = Point3D.vecFromSub2Points((Point3D) this.pts.get(pInd + 1),
+					(Point3D) this.pts.get(pInd));
+			Vec edge2 = Point3D.vecFromSub2Points((Point3D) this.pts.get(pInd - 1),
+					(Point3D) this.pts.get(pInd));
+			Vec v3 = Vec.crossProd(edge1, edge2);
 
-	@Override
+			if (Vec.dotProd(Vec.crossProd(v3, edge1), edge2) < 0.0D) {
+				return false;
+			}
+		}
+		Vec edge1 = Point3D.vecFromSub2Points((Point3D) this.pts.get(1),
+				(Point3D) this.pts.get(0));
+		Vec edge2 = Point3D.vecFromSub2Points((Point3D) this.pts.get(this.n - 1),
+				(Point3D) this.pts.get(0));
+		Vec v3 = Vec.crossProd(edge1, edge2);
+
+		if (Vec.dotProd(Vec.crossProd(v3, edge1), edge2) < 0.0D)
+			return false;
+		return true;
+	}
+
+	protected boolean isPlanar() {
+		Vec edge1 = Point3D.vecFromSub2Points((Point3D) this.pts.get(1),
+				(Point3D) this.pts.get(0));
+		Vec edge2 = Point3D.vecFromSub2Points((Point3D) this.pts.get(this.n - 1),
+				(Point3D) this.pts.get(0));
+
+		for (int pInd = 2; pInd < this.n - 1; pInd++) {
+			Vec v3 = Point3D.vecFromSub2Points((Point3D) this.pts.get(pInd),
+					(Point3D) this.pts.get(0));
+			/*	if (!Vec.areCoPlanar(edge1, edge2, v3))
+				return false; */
+		}
+		return true;
+	}
+
 	public Vec normal(Point3D p) {
+		Vec vec1 = Point3D.vecFromSub2Points((Point3D) this.pts.get(1),
+				(Point3D) this.pts.get(0));
+		Vec vec2 = Point3D.vecFromSub2Points((Point3D) this.pts.get(this.n - 1),
+				(Point3D) this.pts.get(0));
+		normal = Vec.crossProd(vec1, vec2);
+		normal.normalize();
 		return normal;
 	}
 
+	protected boolean rayIntersectionPointInPolygon(Point3D p, Ray ray,
+			boolean backFace) {
+		Vec PintPray = Point3D.vecFromSub2Points(p, ray.p);
+		for (int pInd = 1; pInd < this.n; pInd++) {
+			Vec sub1 = Point3D.vecFromSub2Points((Point3D) this.pts.get(pInd - 1), ray.p);
+			Vec sub2 = Point3D.vecFromSub2Points((Point3D) this.pts.get(pInd), ray.p);
+			Vec cross = Vec.crossProd(sub2, sub1);
 
+			double dot = Vec.dotProd(cross, PintPray);
+			if (((dot < 0.0D ? 1 : 0) & (backFace ? 0 : 1)) != 0) {
+				return false;
+			}
+			if ((dot > 0.0D & backFace)) {
+				return false;
+			}
+		}
+
+		Vec sub1 = Point3D.vecFromSub2Points((Point3D) this.pts.get(this.n - 1), ray.p);
+		Vec sub2 = Point3D.vecFromSub2Points((Point3D) this.pts.get(0), ray.p);
+		Vec cross = Vec.crossProd(sub2, sub1);
+		double dot = Vec.dotProd(cross, PintPray);
+		if (((dot < 0.0D ? 1 : 0) & (backFace ? 0 : 1)) != 0) {
+			return false;
+		}
+		if ((dot > 0.0D & backFace)) {
+			return false;
+		}
+
+		return true;
+	}
+	public Point3D findRayPlaneIntersection(Point3D planePoint, Vec planeNormal, Ray ray)
+	{
+		double dotVecNormal = Vec.dotProd(ray.v, planeNormal);
+		if (dotVecNormal >= 0.0D)
+		{
+			return null;
+		}
+
+		Vec planeRayVec = Point3D.vecFromSub2Points(planePoint, ray.p);
+		double planeRayVecDotWithNormal = Vec.dotProd(planeRayVec, planeNormal);
+
+		if (planeRayVecDotWithNormal >= 0.0D)
+		{
+			return null;
+		}
+
+		Point3D intersectionPoint = new Point3D(ray.p);
+		intersectionPoint.mac(planeRayVecDotWithNormal / dotVecNormal, ray.v);
+		return intersectionPoint;
+	}
 }

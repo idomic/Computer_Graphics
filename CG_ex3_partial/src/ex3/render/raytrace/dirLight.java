@@ -23,7 +23,7 @@ public class dirLight extends Light {
 	
 	@Override
 	public Vec getColor(Point3D point) {
-		return this.color;
+		return color;
 	}
 
 	@Override
