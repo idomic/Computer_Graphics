@@ -3,6 +3,7 @@ package ex3.render.raytrace;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import math.Point3D;
 import math.Ray;
@@ -171,10 +172,8 @@ public class Scene implements IInitable {
 				}
 
 				SigmaColor.scale(Si);
-
 				Ii = light.getColor(intersectionPoint);
 				SigmaColor.scale(Ii);
-
 				I.add(SigmaColor);
 			}
 
@@ -191,7 +190,6 @@ public class Scene implements IInitable {
 
 		// Calculate KrIr recursively as needed and add it to I.
 		I.mac(Kr, calcColor(reflectionRay, curLevel, reflectionHit));
-
 		return I;
 
 	}
@@ -230,7 +228,6 @@ public class Scene implements IInitable {
 			triangle.init(attributes);
 			surfaces.add(triangle);
 		}
-		
 		if ("convexpolygon".equals(name)) {
 			
 			// Scan triangle's 3 points which given in 3 coordinates each.
@@ -238,7 +235,43 @@ public class Scene implements IInitable {
 			poligon.init(attributes);
 			surfaces.add(poligon);
 		}
+		if ("Rectangle".equals(name)){
+			surface = new Rectangle();
+			surface.init(attributes);
+			surfaces.add(surface);
+		}
+		if ("trimesh".equals(name)) {
+			for (String key : attributes.keySet()) {
+				if (key.startsWith("tri")) {
+					// The triangle 3 points are given in 3 coordinates each.
+					double p0x, p0y, p0z;
+					double p1x, p1y, p1z;
+					double p2x, p2y, p2z;
+					Point3D p1, p2, p3;
 
+					// Scan from the attributes the 3 point of the triangle.
+					Scanner scan = new Scanner(attributes.get(key));
+					p0x = scan.nextDouble();
+					p0y = scan.nextDouble();
+					p0z = scan.nextDouble();
+					p1 = new Point3D(p0x, p0y, p0z);
+
+					p1x = scan.nextDouble();
+					p1y = scan.nextDouble();
+					p1z = scan.nextDouble();
+					p2 = new Point3D(p1x, p1y, p1z);
+
+					p2x = scan.nextDouble();
+					p2y = scan.nextDouble();
+					p2z = scan.nextDouble();
+					p3 = new Point3D(p2x, p2y, p2z);
+
+					triangle = new Triangle(p1, p2, p3);
+					triangle.init(attributes);
+					this.surfaces.add(triangle);
+				}
+			}
+		}
 		// Lights objects
 		if ("omni-light".equals(name))
 			light = new omniLight();
@@ -258,7 +291,6 @@ public class Scene implements IInitable {
 			light.init(attributes);
 			lights.add(light);
 		}
-
 	}
 
 	public void setCameraAttributes(Map<String, String> attributes) {
