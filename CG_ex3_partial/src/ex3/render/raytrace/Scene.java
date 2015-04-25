@@ -3,7 +3,6 @@ package ex3.render.raytrace;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 import math.Point3D;
 import math.Ray;
@@ -70,13 +69,13 @@ public class Scene implements IInitable {
 	 * @param ray
 	 * @return
 	 */
-	public MinIntersection findIntersection(Ray ray, boolean backend) {
+	public MinIntersection findIntersection(Ray ray, boolean backside) {
 		double min = Double.MAX_VALUE;
 		Surface min_surface = null;
 
 		// For each surface check for nearest intersection.
 		for (Surface surface : surfaces) {
-			double curDist = surface.Intersect(ray, backend);
+			double curDist = surface.Intersect(ray, backside);
 			if ((curDist < min) && (curDist > Ray.eps)) {
 				min_surface = surface;
 				min = curDist;

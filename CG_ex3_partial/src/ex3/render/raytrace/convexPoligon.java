@@ -12,7 +12,6 @@ public class convexPoligon extends Surface {
 	protected LinkedList<Point3D> pts;
 	protected int n;
 	protected Vec normal;
-	protected boolean backFace = false;
 
 	 public convexPoligon()
 	  {
@@ -31,10 +30,10 @@ public class convexPoligon extends Surface {
 		normal(pts.getFirst());
 	}
 
-	public double Intersect(Ray ray) {
+	public double Intersect(Ray ray, boolean backside) {
 		Double inf = Double.MAX_VALUE;
 		Vec faceNormal = new Vec();
-		if (backFace)
+		if (backside)
 			faceNormal = Vec.negate(this.normal);
 		else {
 			faceNormal = this.normal;
@@ -47,7 +46,7 @@ public class convexPoligon extends Surface {
 		if (totalLength < Ray.eps) {
 			return inf;
 		}
-		if (rayIntersectionPointInPolygon(intersectionPoint, ray, backFace)) {
+		if (rayIntersectionPointInPolygon(intersectionPoint, ray, backside)) {
 			return totalLength;
 		}
 		return inf;

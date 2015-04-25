@@ -38,7 +38,7 @@ public class sphere extends Surface {
 	 * We worked according to the Geometric method.
 	 * @param ray - the ray that intersects the sphere
 	 */
-	public double Intersect(Ray ray) {
+	public double Intersect(Ray ray, boolean backside) {
 		double inf = Double.MAX_VALUE;
 		Point3D p = ray.p;
 		
@@ -49,7 +49,7 @@ public class sphere extends Surface {
 		
 		// Proj (Tm) is the projection of vCenter on v.
 		double proj = Vec.dotProd(vCenter, v);
-		if (proj < 0) {
+		if ((proj < 0)) {
 			return inf;
 		}
 		

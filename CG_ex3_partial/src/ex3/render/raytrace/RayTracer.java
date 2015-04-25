@@ -81,7 +81,7 @@ public class RayTracer implements IRenderer {
 		Ray ray = scene.camera.constructRayThroughPixel(x, y, height, width);
 		
 		// Find intersection with the scene
-		MinIntersection intersection = scene.findIntersection(ray);
+		MinIntersection intersection = scene.findIntersection(ray, false);
 		
 		// If no intersection try background image or background color.
 		if(intersection == null) {

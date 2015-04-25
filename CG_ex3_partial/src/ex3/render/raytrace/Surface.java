@@ -58,7 +58,7 @@ public abstract class Surface implements IInitable {
 	 * @param ray
 	 * @return the ray's distance to the object
 	 */
-	public abstract double Intersect(Ray ray);
+	public abstract double Intersect(Ray ray, boolean backside);
 	
 	public abstract Vec normal(Point3D p);
 }
