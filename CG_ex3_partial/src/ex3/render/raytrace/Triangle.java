@@ -13,7 +13,7 @@ public class Triangle extends Surface {
 	protected Point3D p2;
 	private Vec normal;
 
-	public Triangle(Point3D p1, Point3D p2, Point3D p0) {
+	public Triangle(Point3D p0, Point3D p1, Point3D p2) {
 		this.p0 = p0;
 		this.p1 = p1;
 		this.p2 = p2;

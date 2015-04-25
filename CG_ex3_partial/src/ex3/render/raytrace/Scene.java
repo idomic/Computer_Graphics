@@ -92,19 +92,24 @@ public class Scene implements IInitable {
 	}
 
 	public Vec calcColor(Ray ray, int curLevel, MinIntersection intersection) {
+<<<<<<< HEAD
 		if(recLevel == curLevel) {
 			return new Vec(0,0,0);
+=======
+		if (recLevel == curLevel) {
+			return new Vec(0, 0, 0);
+>>>>>>> origin/master
 		}
 		// If no intersection, chose background color
-		if(intersection == null) {
+		if (intersection == null) {
 			return this.backCol;
 		}
 		Point3D intersectionPoint = intersection.intersectionPoint;
 		Surface surface = intersection.minSurface;
-		
-		//Material Emission
+
+		// Material Emission
 		Vec Ie = new Vec(surface.emission);
-		//Global*Material ambient
+		// Global*Material ambient
 		Vec kaIa = Vec.scale(surface.ambient, this.ambient);
 		// Material diffuse
 		Vec Kd = surface.diffuse;
@@ -134,13 +139,12 @@ public class Scene implements IInitable {
 		Vec SigmaColor;
 		Light light;
 
-		
 		// Diffuse & Specular calculations
 		for (int i = 0; i < lights.size(); i++) {
 			light = lights.get(i);
 			Si = 1;
 			Li = light.getDir(intersectionPoint);
-			
+
 			// Check if there is a surface blocking the ray from the light
 			// source. Used to set if a shadow is needed.
 			Ray rayToLightSrc = new Ray(intersectionPoint, Li);
@@ -148,7 +152,8 @@ public class Scene implements IInitable {
 			// Set the shadow if there is no surface on the way from the light
 			// source.
 			if (rayNearestIntersection != null) {
-				Si = light.getShadow(intersectionPoint,rayNearestIntersection.dist);
+				Si = light.getShadow(intersectionPoint,
+						rayNearestIntersection.dist);
 			}
 
 			// Shadow - ray is not blocked
@@ -191,11 +196,15 @@ public class Scene implements IInitable {
 		curLevel++;
 
 		// Calculate KrIr recursively as needed and add it to I.
+<<<<<<< HEAD
 		I.mac(Kr,
 				calcColor(reflectionRay, curLevel, reflectionHit));
+=======
+		I.mac(Kr, calcColor(reflectionRay, curLevel, reflectionHit));
+>>>>>>> origin/master
 
 		return I;
-	
+
 	}
 
 	/**
@@ -207,50 +216,46 @@ public class Scene implements IInitable {
 	 *            Object's attributes
 	 */
 	public void addObjectByName(String name, Map<String, String> attributes) {
-		Scanner scan = null;
 		Surface surface = null;
 		Light light = null;
+		Triangle triangle = null;
+		convexPoligon poligon = null;
 
-		if ("sphere".equals(name))
+		if ("sphere".equals(name)) {
 			surface = new sphere();
+		}
 
 		if ("disc".equals(name)) {
 			surface = new disc();
 		}
-		
-		if ("trimesh".equals(name)) {
-			for (String key : attributes.keySet()) {
-				if (key.startsWith("tri")) {
-					// The triangle 3 points are given in 3 coordinates each.
-					double triP0x, triP0y, triP0z;
-					double triP1x, triP1y, triP1z;
-					double triP2x, triP2y, triP2z;
-					Point3D p1, p2, p3;
-					Triangle triangle;
 
-					scan = new Scanner(attributes.get(key));
-					triP0x = scan.nextDouble();
-					triP0y = scan.nextDouble();
-					triP0z = scan.nextDouble();
-					p1 = new Point3D(triP0x, triP0y, triP0z);
-
-					triP1x = scan.nextDouble();
-					triP1y = scan.nextDouble();
-					triP1z = scan.nextDouble();
-					p2 = new Point3D(triP1x, triP1y, triP1z);
-
-					triP2x = scan.nextDouble();
-					triP2y = scan.nextDouble();
-					triP2z = scan.nextDouble();
-					p3 = new Point3D(triP2x, triP2y, triP2z);
-
-					triangle = new Triangle(p1, p2, p3);
-					triangle.init(attributes);
-					this.surfaces.add(triangle);
-				}
-			}
-		}
+		if ("triangle".equals(name)) {
 			
+			// Scan triangle's 3 points which given in 3 coordinates each.
+			Point3D p1, p2, p0;
+
+			p0 = new Point3D(attributes.get("p0"));
+			p1 = new Point3D(attributes.get("p1"));
+			p2 = new Point3D(attributes.get("p2"));
+			triangle = new Triangle(p0, p1, p2);
+			triangle.init(attributes);
+			surfaces.add(triangle);
+		}
+		
+		if ("convexpolygon".equals(name)) {
+			
+			// Scan triangle's 3 points which given in 3 coordinates each.
+			Point3D p0, p1, p2, p3;
+
+			p0 = new Point3D(attributes.get("p0"));
+			p1 = new Point3D(attributes.get("p1"));
+			p2 = new Point3D(attributes.get("p2"));
+			p3 = new Point3D(attributes.get("p3"));
+			poligon = new convexPoligon(p0, p1, p2, p3);
+			poligon.init(attributes);
+			surfaces.add(poligon);
+		}
+
 		// Lights objects
 		if ("omni-light".equals(name))
 			light = new omniLight();
