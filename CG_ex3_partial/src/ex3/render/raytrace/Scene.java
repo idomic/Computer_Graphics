@@ -208,14 +208,13 @@ public class Scene implements IInitable {
 		Triangle triangle = null;
 		convexPoligon poligon = null;
 
+		// Initialize all surfaces by name
 		if ("sphere".equals(name)) {
 			surface = new sphere();
 		}
-
 		if ("disc".equals(name)) {
 			surface = new disc();
 		}
-
 		if ("triangle".equals(name)) {
 			
 			// Scan triangle's 3 points which given in 3 coordinates each.
