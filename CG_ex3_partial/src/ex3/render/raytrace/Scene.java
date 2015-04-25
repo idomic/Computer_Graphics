@@ -229,8 +229,6 @@ public class Scene implements IInitable {
 			surfaces.add(triangle);
 		}
 		if ("convexpolygon".equals(name)) {
-			
-			// Scan triangle's 3 points which given in 3 coordinates each.
 			poligon = new convexPoligon();
 			poligon.init(attributes);
 			surfaces.add(poligon);
@@ -243,13 +241,12 @@ public class Scene implements IInitable {
 		if ("trimesh".equals(name)) {
 			for (String key : attributes.keySet()) {
 				if (key.startsWith("tri")) {
-					// The triangle 3 points are given in 3 coordinates each.
 					double p0x, p0y, p0z;
 					double p1x, p1y, p1z;
 					double p2x, p2y, p2z;
 					Point3D p1, p2, p3;
 
-					// Scan from the attributes the 3 point of the triangle.
+					// Scan into 3 triangular points
 					Scanner scan = new Scanner(attributes.get(key));
 					p0x = scan.nextDouble();
 					p0y = scan.nextDouble();
@@ -272,6 +269,7 @@ public class Scene implements IInitable {
 				}
 			}
 		}
+		
 		// Lights objects
 		if ("omni-light".equals(name))
 			light = new omniLight();
