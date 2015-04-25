@@ -25,9 +25,6 @@ public class Rectangle extends Surface {
 	private double firstSideL;
 	private double secondSideL;
 
-	/**
-	 * The constructor.
-	 */
 	public Rectangle() {
 	}
 
@@ -51,55 +48,55 @@ public class Rectangle extends Surface {
 
 	@Override
 	public double Intersect(Ray ray, boolean backside) {
-		Point3D rayOrigin = ray.p;
-		Vec rayDirection = ray.v;
-		Point3D intersectionPoint;
+		Point3D pos = ray.p;
+		Vec direction = ray.v;
+		double inf = Double.MAX_VALUE;
 
 		// The "t" from the plane - ray intersection from class.
-		double intersectionDistance;
+		double distance;
 
 		// Check that the ray direction is in the face of the triangle.
 		// (direction and normal are already normalized).
-		if (Vec.dotProd(rayDirection, this.normal) >= 0) {
-			return Double.POSITIVE_INFINITY;
+		if (Vec.dotProd(direction, normal) >= 0) {
+			return inf;
 		}
 
 		// Get the intersection distance.
-		intersectionDistance = Point3D.vecFromSub2Points(this.p1, rayOrigin)
-				.dotProd(this.normal) / ray.v.dotProd(this.normal);
+		distance = Point3D.vecFromSub2Points(p1, pos)
+				.dotProd(normal) / ray.v.dotProd(normal);
 
-		intersectionPoint = Point3D.pointAtEndOfVec(rayOrigin,
-				intersectionDistance, rayDirection);
+		Point3D intersection = Point3D.pointAtEndOfVec(pos,
+				distance, direction);
 
-		Vec rectangoriginToIntersection = Point3D.vecFromSub2Points(
-				intersectionPoint, this.p0);
+		Vec posTointersection = Point3D.vecFromSub2Points(
+				intersection, p0);
 
 		// Gets the projection of the new vector on according to the plain
 		// vectors
 		// if the projections are between 0 and the original length of the
 		// vectors it means that the point is on the Rectangular Plane.
-		double projectV1 = Vec.dotProd(rectangoriginToIntersection,
-				this.vecfirstSide);
-		double projectV2 = Vec.dotProd(rectangoriginToIntersection,
-				this.vecsecondSide);
-		if (projectV1 >= 0 && projectV2 >= 0 && projectV1 <= this.firstSideL
-				&& projectV2 <= this.secondSideL) {
-			return intersectionDistance;
+		double projectV1 = Vec.dotProd(posTointersection,
+				vecfirstSide);
+		double projectV2 = Vec.dotProd(posTointersection,
+				vecsecondSide);
+		if (projectV1 >= 0 && projectV2 >= 0 && projectV1 <= firstSideL
+				&& projectV2 <= secondSideL) {
+			return distance;
 		} else {
-			return Double.POSITIVE_INFINITY;
+			return inf;
 		}
 
 	}
 
 	@Override
 	public Vec normal(Point3D intersection) {
-		return this.normal;
+		return normal;
 	}
 
 	/*
-	 * Create from the 3 given point a rectangle.
+	 * Generate rectangle from the 3 points.
 	 * 
-	 * @param p1 - The rectangle origin.
+	 * @param p1 - The rectangle position.
 	 * 
 	 * @param p2
 	 * 
@@ -109,26 +106,26 @@ public class Rectangle extends Surface {
 		this.p0 = p0;
 		this.p1 = p1;
 		this.p2 = p2;
-		// Create the 2 vectors define the rectangle and the sides lengths.
-		this.vecfirstSide = Point3D.vecFromSub2Points(this.p1, this.p0);
-		this.firstSideL = vecfirstSide.length();
-		this.vecfirstSide.normalize();
-		this.vecsecondSide = Point3D.vecFromSub2Points(this.p2, this.p0);
-		this.secondSideL = vecsecondSide.length();
-		this.vecsecondSide.normalize();
+		
+		// Define the rectangle and the sides lengths.
+		vecfirstSide = Point3D.vecFromSub2Points(this.p1, this.p0);
+		firstSideL = vecfirstSide.length();
+		vecfirstSide.normalize();
+		vecsecondSide = Point3D.vecFromSub2Points(this.p2, this.p0);
+		secondSideL = vecsecondSide.length();
+		vecsecondSide.normalize();
 
-		// Checks whether the 3 points creates a legal rectangle (The vector
-		// between them are orthogonal).
+		// Check if a legal rectangle - vectors are orthogonal
 		if (vecfirstSide.dotProd(vecsecondSide) != 0) {
-			System.err.println("The given points are not of a rectangle");
+			System.err.println("Not a legal rectangle!");
 		}
 
-		// Calculate the last (fourth) point of the rectangle.
-		this.p3 = Point3D.pointAtEndOfVec(this.p1, this.secondSideL,
-				this.vecsecondSide);
+		// Generate a fourth point.
+		p3 = Point3D.pointAtEndOfVec(this.p1, secondSideL,
+				vecsecondSide);
 
-		// Calculate the normal to the plain on which the rectangle is on.
-		this.normal = Vec.crossProd(this.vecfirstSide, this.vecsecondSide);
-		this.normal.normalize();
+		// Calculate the normal to the plain of the rectangle.
+		normal = Vec.crossProd(vecfirstSide, vecsecondSide);
+		normal.normalize();
 	}
 }
