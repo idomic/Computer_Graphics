@@ -39,73 +39,36 @@ public class sphere extends Surface {
 	 * @param ray - the ray that intersects the sphere
 	 */
 	public double Intersect(Ray ray) {
-//		double inf = Double.MAX_VALUE;
-//		Point3D p = ray.p;
-//		
-//		// V is the vector which intersects the sphere + vCenter is a vector to the sphere center.
-//		Vec v = ray.v;
-//		Vec vCenter = new Vec(center, p);
-//		double dRadius =  Math.pow(radius,2);
-//		
-//		// Proj (Tm) is the projection of vCenter on v.
-//		double proj = Vec.dotProd(vCenter, v);
-//		if ((proj < 0)) {
-//			return inf;
-//		}
-//		
-//		// The double distance from the ray to the sphere center.
-//		// If bigger than radius, no intersection.
-//		double dDist = vCenter.lengthSquared() - Math.pow(proj, 2);
-//		if (dDist > dRadius) {
-//			return inf;
-//		}
-//		
-//		// The distance from radius to intersection points.
-//		// If there is one intersection point.
-//		double th = Math.sqrt(dRadius - dDist);
-//		if (th == 0) {
-//			return proj;
-//		} else {
-//				// Get the minimal distance intersection point.
-//				return (proj - th);
-//		}
-	
+		double inf = Double.MAX_VALUE;
+		Point3D p = ray.p;
 		
+		// V is the vector which intersects the sphere + vCenter is a vector to the sphere center.
+		Vec v = ray.v;
+		Vec vCenter = new Vec(center, p);
+		double dRadius =  Math.pow(radius,2);
 		
-		/* 
-		 * calculate the distance between ray and this Sphere
-		 * Return the distance between ray and intersection point or POSITIVE_INFINITY if there is no intersection
-		 */
-			Vec L = Point3D.vecFromSub2Points(center, ray.p);
-			double tca = Vec.dotProd(L, ray.v);
-			if(tca < 0) {
-				// no intersection
-				return Double.POSITIVE_INFINITY;
-			}
-			//Pythagoras
-			double powD = L.lengthSquared() - Math.pow(tca, 2);
-			double powR = Math.pow(radius, 2);
-			if (powD > powR) {
-				// no intersection
-				return Double.POSITIVE_INFINITY;
-			}
-			double thc = Math.sqrt(powR - powD);
-			// single intersection point
-			if (thc == 0) {
-				return tca;
-			} else {
-				double t1 = tca-thc;
-				double t2 = tca+thc;
-				if (!(t1 > 0) || !(t2 > 0)){
-					// no intersection
-					return Double.POSITIVE_INFINITY;
-				} else {
-					// minimal between (Tca - Thc) and (Tca + Thc) 
-					return Math.min(t1, t2);
-				}
-			}	
+		// Proj (Tm) is the projection of vCenter on v.
+		double proj = Vec.dotProd(vCenter, v);
+		if ((proj < 0)) {
+			return inf;
+		}
 		
+		// The double distance from the ray to the sphere center.
+		// If bigger than radius, no intersection.
+		double dDist = vCenter.lengthSquared() - Math.pow(proj, 2);
+		if (dDist > dRadius) {
+			return inf;
+		}
 		
+		// The distance from radius to intersection points.
+		// If there is one intersection point.
+		double th = Math.sqrt(dRadius - dDist);
+		if (th == 0) {
+			return proj;
+		} else {
+				// Get the minimal distance intersection point.
+				return (proj - th);
+		}
 	}
 
 	@Override
