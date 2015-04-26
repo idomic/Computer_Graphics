@@ -76,38 +76,19 @@ public class RayTracer implements IRenderer {
 	 */
 	@Override
 	public void renderLine(BufferedImage canvas, int line) {
-//		for (int i = 0; i < width; i++) {
-//			canvas.setRGB(i, line, castRay(i, line).getRGB());
-//		}
-		
+		for (int i = 0; i < width; i++) {
+			canvas.setRGB(i, line, castRay(i, line).getRGB());
+		}
+	}
+
+	protected Color castRay(int x, int y) {
 		double scaleHeightFactor = 1.0;
 		double scaleWidthFactor = 1.0;
 		if (image != null)
 		{
-			scaleHeightFactor = imgHeight / height;
-			scaleWidthFactor = imgWidth / width;
-		
-		
-		
+			scaleHeightFactor = (double)imgHeight / height;
+			scaleWidthFactor = (double)imgWidth / width;
 		}
-			for (int i = 0; i < canvas.getWidth(); i++) {
-				if (castRay(i, line) == null) {
-					canvas.setRGB(i, line, image.getRGB((int)(i * scaleWidthFactor), (int)(line * scaleHeightFactor)));
-				} else {
-					canvas.setRGB(i, line, castRay(i, line).getRGB());
-				}
-			}
-		
-	}
-
-	protected Color castRay(int x, int y) {
-//		double scaleHeightFactor = 1.0;
-//		double scaleWidthFactor = 1.0;
-//		if (image != null)
-//		{
-//			scaleHeightFactor = image.getHeight() / height;
-//			scaleWidthFactor = image.getWidth() / width;		
-//		}
 		
 		// Constructing the ray through the center of a pixel.
 		Ray ray = scene.camera.constructRayThroughPixel(x, y, height, width);
@@ -116,34 +97,31 @@ public class RayTracer implements IRenderer {
 		MinIntersection intersection = scene.findIntersection(ray, false);
 		
 		// If no intersection try background image or background color.
-//		if(intersection == null) {
-//			if(image == null) {
-//				return scene.backCol.Vec2Color();
-//			} else { 
-//				return new Color(image.getRGB((int)(x * scaleWidthFactor), (int)(y * scaleHeightFactor)));
-//			}
-//		}
-		
-		
-		if (((image != null ? 1 : 0) & (intersection == null ? 1 : 0)) != 0) {
-		      return null;
-		    }
-		
+		if(intersection == null) {
+			if(image == null) {
+				return scene.backCol.Vec2Color();
+			} else { 
+				return new Color(image.getRGB((int)(x * scaleWidthFactor), (int)(y * scaleHeightFactor)));
+			}
+		}
+	
 		if (scene.superSamp > 1)
 		{
-			Vec color = new Vec();
+			Vec sumColors = new Vec();
+			// Scan grid of subpixels
 			for (int i = 0; i < scene.superSamp; i++) {
 				for (int j = 0; j < scene.superSamp; j++)
 				{
-					Ray newRay = this.scene.camera.constructRayThroughPixel(x + i / this.scene.superSamp, 
-							y + j / this.scene.superSamp, height, width);
+					double newSubPixelX = x + i / scene.superSamp;
+					double newSubPixelY = y + j / scene.superSamp;
+					Ray newRay = scene.camera.constructRayThroughPixel(newSubPixelX, newSubPixelY, height, width);
 					MinIntersection newIntersection = this.scene.findIntersection(newRay, false);
-					Vec subcolor = this.scene.calcColor(newRay, 0, newIntersection);
-					color.add(subcolor);
+					sumColors.add(this.scene.calcColor(newRay, 0, newIntersection));
 				}
 			}
-			color.scale(1.0D / Math.pow(this.scene.superSamp, 2.0D));
-			return color.Vec2Color();
+			// Divide sum of colors by number of subpixels
+			sumColors.scale(1.0 / (scene.superSamp * scene.superSamp));
+			return sumColors.Vec2Color();
 		}
 
 		return scene.calcColor(ray, 0, intersection).Vec2Color();
