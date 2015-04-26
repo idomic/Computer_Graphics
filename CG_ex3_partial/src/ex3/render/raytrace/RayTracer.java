@@ -23,6 +23,9 @@ public class RayTracer implements IRenderer {
 	protected int height;
 	protected File path;
 	protected BufferedImage image;
+	protected int imgHeight;
+	protected int imgWidth;
+	
 	/**
 	 * Inits the renderer with scene description and sets the target canvas to
 	 * size (width X height). After init renderLine may be called
@@ -49,6 +52,8 @@ public class RayTracer implements IRenderer {
 			File imageFile = new File(this.path.getParent() + File.separator + this.scene.backTex);
 			try {
 				image = ImageIO.read(imageFile);
+				imgHeight = image.getHeight();
+				imgWidth = image.getWidth();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}	
@@ -71,37 +76,38 @@ public class RayTracer implements IRenderer {
 	 */
 	@Override
 	public void renderLine(BufferedImage canvas, int line) {
-		for (int i = 0; i < width; i++) {
-			canvas.setRGB(i, line, castRay(i, line).getRGB());
+//		for (int i = 0; i < width; i++) {
+//			canvas.setRGB(i, line, castRay(i, line).getRGB());
+//		}
+		
+		double scaleHeightFactor = 1.0;
+		double scaleWidthFactor = 1.0;
+		if (image != null)
+		{
+			scaleHeightFactor = imgHeight / height;
+			scaleWidthFactor = imgWidth / width;
+		
+		
+		
 		}
+			for (int i = 0; i < canvas.getWidth(); i++) {
+				if (castRay(i, line) == null) {
+					canvas.setRGB(i, line, image.getRGB((int)(i * scaleWidthFactor), (int)(line * scaleHeightFactor)));
+				} else {
+					canvas.setRGB(i, line, castRay(i, line).getRGB());
+				}
+			}
+		
+	}
+
+	protected Color castRay(int x, int y) {
 //		double scaleHeightFactor = 1.0;
 //		double scaleWidthFactor = 1.0;
 //		if (image != null)
 //		{
 //			scaleHeightFactor = image.getHeight() / height;
-//			scaleWidthFactor = image.getWidth() / width;
-//		
-//		
-//		
+//			scaleWidthFactor = image.getWidth() / width;		
 //		}
-//			for (int i = 0; i < canvas.getWidth(); i++) {
-//				if (castRay(i, line) == null) {
-//					canvas.setRGB(i, line, image.getRGB((int)(i * scaleWidthFactor), (int)(line * scaleHeightFactor)));
-//				} else {
-//					canvas.setRGB(i, line, castRay(i, line).getRGB());
-//				}
-//			}
-//		
-	}
-
-	protected Color castRay(int x, int y) {
-		double scaleHeightFactor = 1.0;
-		double scaleWidthFactor = 1.0;
-		if (image != null)
-		{
-			scaleHeightFactor = image.getHeight() / height;
-			scaleWidthFactor = image.getWidth() / width;		
-		}
 		
 		// Constructing the ray through the center of a pixel.
 		Ray ray = scene.camera.constructRayThroughPixel(x, y, height, width);
@@ -110,13 +116,18 @@ public class RayTracer implements IRenderer {
 		MinIntersection intersection = scene.findIntersection(ray, false);
 		
 		// If no intersection try background image or background color.
-		if(intersection == null) {
-			if(image == null) {
-				return scene.backCol.Vec2Color();
-			} else { 
-				return new Color(image.getRGB((int)(x * scaleWidthFactor), (int)(y * scaleHeightFactor)));
-			}
-		}
+//		if(intersection == null) {
+//			if(image == null) {
+//				return scene.backCol.Vec2Color();
+//			} else { 
+//				return new Color(image.getRGB((int)(x * scaleWidthFactor), (int)(y * scaleHeightFactor)));
+//			}
+//		}
+		
+		
+		if (((image != null ? 1 : 0) & (intersection == null ? 1 : 0)) != 0) {
+		      return null;
+		    }
 		
 		if (scene.superSamp > 1)
 		{
