@@ -70,13 +70,13 @@ public class Scene implements IInitable {
 	 * @param ray
 	 * @return
 	 */
-	public MinIntersection findIntersection(Ray ray, boolean backside) {
+	public MinIntersection findIntersection(Ray ray) {
 		double min = Double.MAX_VALUE;
 		Surface min_surface = null;
 
 		// For each surface check for nearest intersection.
 		for (Surface surface : surfaces) {
-			double curDist = surface.Intersect(ray, backside);
+			double curDist = surface.Intersect(ray);
 			if ((curDist < min) && (curDist > Ray.eps)) {
 				min_surface = surface;
 				min = curDist;
@@ -143,7 +143,7 @@ public class Scene implements IInitable {
 			// Check if there is a surface blocking the ray from the light
 			// source. Used to set if a shadow is needed.
 			Ray rayToLightSrc = new Ray(intersectionPoint, Li);
-			MinIntersection rayNearestIntersection = findIntersection(rayToLightSrc, true);
+			MinIntersection rayNearestIntersection = findIntersection(rayToLightSrc);
 			// Set the shadow if there is no surface on the way from the light
 			// source.
 			if (rayNearestIntersection != null) {
@@ -184,7 +184,7 @@ public class Scene implements IInitable {
 		reflection.normalize();
 
 		Ray reflectionRay = new Ray(intersectionPoint, reflection);
-		MinIntersection reflectionHit = findIntersection(reflectionRay, false);
+		MinIntersection reflectionHit = findIntersection(reflectionRay);
 
 		curLevel++;
 
@@ -267,6 +267,11 @@ public class Scene implements IInitable {
 					this.surfaces.add(triangle);
 				}
 			}
+		}
+		if("plain".equals(name)) {
+			surface = new Plain();
+			surface.init(attributes);
+			surfaces.add(surface);
 		}
 		
 		// Lights objects
