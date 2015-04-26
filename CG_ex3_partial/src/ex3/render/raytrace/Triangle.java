@@ -97,7 +97,6 @@ public class Triangle extends Surface {
 		if (Vec.dotProd(ray.v, normal) > 0) {
 			return inf;
 		}
-
 		return intersectionDistance;
 	}
 
