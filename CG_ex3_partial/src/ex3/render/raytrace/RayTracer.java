@@ -94,7 +94,7 @@ public class RayTracer implements IRenderer {
 		Ray ray = scene.camera.constructRayThroughPixel(x, y, height, width);
 		
 		// Find intersection with the scene
-		MinIntersection intersection = scene.findIntersection(ray, false);
+		MinIntersection intersection = scene.findIntersection(ray);
 		
 		// If no intersection try background image or background color.
 		if(intersection == null) {
@@ -112,11 +112,19 @@ public class RayTracer implements IRenderer {
 			for (int i = 0; i < scene.superSamp; i++) {
 				for (int j = 0; j < scene.superSamp; j++)
 				{
+<<<<<<< HEAD
 					double newSubPixelX = x + i / scene.superSamp;
 					double newSubPixelY = y + j / scene.superSamp;
 					Ray newRay = scene.camera.constructRayThroughPixel(newSubPixelX, newSubPixelY, height, width);
 					MinIntersection newIntersection = this.scene.findIntersection(newRay, false);
 					sumColors.add(this.scene.calcColor(newRay, 0, newIntersection));
+=======
+					Ray newRay = this.scene.camera.constructRayThroughPixel(x + i / this.scene.superSamp, 
+							y + j / this.scene.superSamp, height, width);
+					MinIntersection newIntersection = this.scene.findIntersection(newRay);
+					Vec subcolor = this.scene.calcColor(newRay, 0, newIntersection);
+					color.add(subcolor);
+>>>>>>> origin/master
 				}
 			}
 			// Divide sum of colors by number of subpixels

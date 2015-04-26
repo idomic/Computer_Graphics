@@ -43,7 +43,7 @@ public class Triangle extends Surface {
 	}
 
 	@Override
-	public double Intersect(Ray ray, boolean backside) {
+	public double Intersect(Ray ray) {
 		double inf = Double.MAX_VALUE;
 		Point3D pos = ray.p;
 		Vec direction = ray.v;
@@ -94,7 +94,7 @@ public class Triangle extends Surface {
 				|| (Vec.dotProd(intersectionDirection, norm3) < 0)) {
 			return inf;
 			}
-		if (backside == Vec.dotProd(ray.v, normal) < 0) {
+		if (Vec.dotProd(ray.v, normal) > 0) {
 			return inf;
 		}
 

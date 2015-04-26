@@ -12,6 +12,7 @@ public class convexPoligon extends Surface {
 	protected LinkedList<Point3D> pts;
 	protected int n;
 	protected Vec normal;
+	protected boolean backside = false;
 
 	 public convexPoligon()
 	  {
@@ -30,14 +31,10 @@ public class convexPoligon extends Surface {
 		normal(pts.getFirst());
 	}
 
-	public double Intersect(Ray ray, boolean backside) {
+	public double Intersect(Ray ray) {
 		Double inf = Double.MAX_VALUE;
 		Vec faceNormal = new Vec();
-		if (backside)
-			faceNormal = Vec.negate(this.normal);
-		else {
 			faceNormal = this.normal;
-		}
 		Point3D intersectionPoint = findRayPlaneIntersection((Point3D) pts.getFirst(), faceNormal, ray);
 		if (intersectionPoint == null) {
 			return inf;
@@ -46,7 +43,7 @@ public class convexPoligon extends Surface {
 		if (totalLength < Ray.eps) {
 			return inf;
 		}
-		if (rayIntersectionPointInPolygon(intersectionPoint, ray, backside)) {
+		if (rayIntersectionPointInPolygon(intersectionPoint, ray)) {
 			return totalLength;
 		}
 		return inf;
@@ -123,8 +120,7 @@ public class convexPoligon extends Surface {
 		return normal;
 	}
 
-	protected boolean rayIntersectionPointInPolygon(Point3D p, Ray ray,
-			boolean backFace) {
+	protected boolean rayIntersectionPointInPolygon(Point3D p, Ray ray) {
 		Vec PintPray = Point3D.vecFromSub2Points(p, ray.p);
 		for (int pInd = 1; pInd < this.n; pInd++) {
 			Vec sub1 = Point3D.vecFromSub2Points((Point3D) this.pts.get(pInd - 1), ray.p);
@@ -132,10 +128,10 @@ public class convexPoligon extends Surface {
 			Vec cross = Vec.crossProd(sub2, sub1);
 
 			double dot = Vec.dotProd(cross, PintPray);
-			if (((dot < 0.0D ? 1 : 0) & (backFace ? 0 : 1)) != 0) {
+			if (((dot < 0.0D ? 1 : 0) & (backside ? 0 : 1)) != 0) {
 				return false;
 			}
-			if ((dot > 0.0D & backFace)) {
+			if ((dot > 0.0D & backside)) {
 				return false;
 			}
 		}
@@ -144,10 +140,10 @@ public class convexPoligon extends Surface {
 		Vec sub2 = Point3D.vecFromSub2Points((Point3D) this.pts.get(0), ray.p);
 		Vec cross = Vec.crossProd(sub2, sub1);
 		double dot = Vec.dotProd(cross, PintPray);
-		if (((dot < 0.0D ? 1 : 0) & (backFace ? 0 : 1)) != 0) {
+		if (((dot < 0.0D ? 1 : 0) & (backside ? 0 : 1)) != 0) {
 			return false;
 		}
-		if ((dot > 0.0D & backFace)) {
+		if ((dot > 0.0D & backside)) {
 			return false;
 		}
 

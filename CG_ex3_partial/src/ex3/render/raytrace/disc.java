@@ -41,7 +41,7 @@ public class disc extends Surface {
 	}
 
 	@Override
-	public double Intersect(Ray ray, boolean backside) {
+	public double Intersect(Ray ray) {
 		double inf = Double.MAX_VALUE;
 		Point3D pos = ray.p;
 		Vec rayDirection = ray.v;
@@ -68,7 +68,7 @@ public class disc extends Surface {
 
 		// Check that the ray is in the direction of the front side of the disc
 		// .Both ray.v and the normal are normalize so we get the cos(angle).
-		if (backside == (Vec.dotProd(rayDirection, normal) < 0)) {
+		if (Vec.dotProd(rayDirection, normal) < 0) {
 			return inf;
 		}
 		return distance;

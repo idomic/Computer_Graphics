@@ -47,7 +47,7 @@ public class Rectangle extends Surface {
 	}
 
 	@Override
-	public double Intersect(Ray ray, boolean backside) {
+	public double Intersect(Ray ray) {
 		Point3D pos = ray.p;
 		Vec direction = ray.v;
 		double inf = Double.MAX_VALUE;
