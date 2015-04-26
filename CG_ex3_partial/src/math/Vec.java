@@ -25,9 +25,10 @@ public class Vec {
 		y = 0;
 		z = 0;
 	}
-	
+
 	/**
 	 * A method to get a vector out of a string.
+	 * 
 	 * @param string
 	 */
 	public Vec(String string) {
@@ -71,7 +72,7 @@ public class Vec {
 		y = v.y;
 		z = v.z;
 	}
-	
+
 	public Vec(Point3D p1, Point3D p0) {
 		this.x = p1.x - p0.x;
 		this.y = p1.y - p0.y;
@@ -113,23 +114,24 @@ public class Vec {
 		y -= a.y;
 		z -= a.z;
 	}
-	
+
 	/**
 	 * This method creates a Color type from a Vector.
+	 * 
 	 * @return Color
 	 */
 	public Color Vec2Color() {
-		float r =1, g=1, b=1;
-		if(this.x < 1.0) {
-			r = (float)this.x;
+		float r = 1, g = 1, b = 1;
+		if (this.x < 1.0) {
+			r = (float) this.x;
 		}
-		if(this.y < 1.0) {
-			g = (float)this.y;
+		if (this.y < 1.0) {
+			g = (float) this.y;
 		}
-		if(this.z < 1.0) {
-			b = (float)this.z;
+		if (this.z < 1.0) {
+			b = (float) this.z;
 		}
-		return new Color(r,g,b);
+		return new Color(r, g, b);
 	}
 
 	/**
@@ -378,5 +380,12 @@ public class Vec {
 	@Override
 	public Vec clone() {
 		return new Vec(this);
+	}
+
+	public static boolean areCoPlanar(Vec v1, Vec v2, Vec v3) {
+		if (dotProd(crossProd(v1, v2), v3) == 0) {
+			return true;
+		}
+		return false;
 	}
 }

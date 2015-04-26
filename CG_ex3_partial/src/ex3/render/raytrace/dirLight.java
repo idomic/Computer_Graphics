@@ -34,7 +34,7 @@ public class dirLight extends Light {
 	@Override
 	public double getShadow(Point3D point, double paramDouble) {
 		
-		// A direcional light has no shadow therefore will retun 1.
+		// A dir light has no shadow.
 		return 1;
 	}
 }

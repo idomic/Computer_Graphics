@@ -13,6 +13,7 @@ public class MinIntersection {
 	// Minimal distance from the ray to the surface.
 	protected double dist;
 	
+	// The constructor itself.
 	public MinIntersection(Point3D p,Surface s, double d) {
 		intersectionPoint = p;
 		minSurface = s;

@@ -36,7 +36,7 @@ public class disc extends Surface {
 			this.normal.normalize();
 		}
 
-		// Computes the plain coefficient (the plain that the disc is part of).
+		// Computes the plain coefficient.
 		plainCoefficient = -(Vec.dotProd(normal, center.convertToVec()));
 	}
 
@@ -46,28 +46,22 @@ public class disc extends Surface {
 		Point3D pos = ray.p;
 		Vec rayDirection = ray.v;
 
-		// According to slide 83 in the modeling presentation:
-		// T = -(n*P0+d)/n*v
+		// Getting the intersection.
 		double t = -(Vec.dotProd(normal, pos.convertToVec()) + plainCoefficient)
 				/ Vec.dotProd(this.normal, rayDirection);
-
-		// Get the intersection point.
 		Point3D intersectionPoint = Point3D.pointAtEndOfVec(pos, t,
 				rayDirection);
 
-		// Check that the point is in the disc and not just in the plain.
-		// If the distance from the center is larger than the radius.
+		// If the distance from the center is larger than the radius no intersection.
 		if (Point3D.vecFromSub2Points(intersectionPoint, this.center).length() > this.radius) {
 			return inf;
 		}
 
-		// Get the distance from the ray origin to the intersection point and if
-		// it is a non negative number then it is in the correct direction.
+		// if a non negative number then the correct direction.
 		double distance = Point3D.vecFromSub2Points(intersectionPoint,
 				pos).length();
 
-		// Check that the ray is in the direction of the front side of the disc
-		// .Both ray.v and the normal are normalize so we get the cos(angle).
+		// Check correct dir, Both are normalized.
 		if (Vec.dotProd(rayDirection, normal) < 0) {
 			return inf;
 		}

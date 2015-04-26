@@ -56,7 +56,6 @@ public class Rectangle extends Surface {
 		double distance;
 
 		// Check that the ray direction is in the face of the triangle.
-		// (direction and normal are already normalized).
 		if (Vec.dotProd(direction, normal) >= 0) {
 			return inf;
 		}

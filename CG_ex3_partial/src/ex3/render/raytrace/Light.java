@@ -13,6 +13,7 @@ import math.Vec;
 public abstract class Light implements IInitable {
 
 	protected Vec color;
+	
 
 
 	public Light() {
@@ -28,6 +29,11 @@ public abstract class Light implements IInitable {
 	
 	public abstract Vec getColor(Point3D point);
 
+	/**
+	 * A method to get the lights direction.
+	 * @param p
+	 * @return
+	 */
 	public abstract Vec getDir(Point3D p);
 	
 	/**

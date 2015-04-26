@@ -39,13 +39,13 @@ public class omniLight extends Light {
 		attenuation = new Point3D(kc, kl, kq);
 	}
 	
-	@Override // Problem with color!!!
+	@Override 
 	public Vec getColor(Point3D point) {
 		
-		// lightToPoint is "L" from the class slides.
+		// lightToPoint = L.
 		Vec lightToPoint = Point3D.vecFromSub2Points(this.pos, point);
 		
-		// distance is "d" from class slides.
+		// distance = d.
 		double distance = lightToPoint.length();
 
 		double lightCoefficient = 1 / (kc + kl * distance + kq
@@ -53,7 +53,8 @@ public class omniLight extends Light {
 		
 		return Vec.scale(lightCoefficient, this.color);
 	}
-
+	
+	@Override
 	public Vec getDir(Point3D p) {
 		Vec ans = Point3D.vecFromSub2Points(this.pos, p);
 		ans.normalize();
@@ -66,7 +67,7 @@ public class omniLight extends Light {
 		Vec vecToLight = Point3D.vecFromSub2Points(this.pos, p);
 		distanceToLight = vecToLight.length();
 
-		// If the hit distance is closer than the light than we have a shadow.
+		// If the hit distance is closer than the light create a shadow.
 		if ((hitDistance > Ray.eps)
 				&& (hitDistance < distanceToLight - Ray.eps)) {
 			return 0;

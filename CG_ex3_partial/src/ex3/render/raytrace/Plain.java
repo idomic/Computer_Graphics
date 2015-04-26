@@ -16,38 +16,6 @@ public class Plain extends Surface {
 	protected Vec normal;
 	protected double plainCoefficient;
 
-	@Override
-	public double Intersect(Ray ray) {
-		Point3D rayOrigin = ray.p;
-		Vec rayDirection = ray.v;
-
-		// According to slide 83 in the modeling presentation:
-		// T = -(n*P0+d)/n*v
-		double t = -(Vec.dotProd(this.normal, rayOrigin.convertToVec()) + plainCoefficient)
-				/ Vec.dotProd(this.normal, rayDirection);
-
-		// Get the intersection point.
-		Point3D intersectionPoint = Point3D.pointAtEndOfVec(rayOrigin, t,
-				rayDirection);
-
-		// Get the distance from the ray origin to the intersection point and if
-		// it is a non negative number then it is in the correct direction.
-		double distance = Point3D.vecFromSub2Points(intersectionPoint,
-				rayOrigin).length();
-
-		// Check that the ray is in the direction of the front side of the
-		// plain. Both ray.v and the normal are normalize so we get the
-		// cos(angle).
-		if (Vec.dotProd(rayDirection, this.normal) >= 0) {
-			return Double.POSITIVE_INFINITY;
-		}
-		return distance;
-	}
-
-	@Override
-	public Vec normal(Point3D intersection) {
-		return normal;
-	}
 
 	@Override
 	public void init(Map<String, String> attributes) {
@@ -65,4 +33,30 @@ public class Plain extends Surface {
 		plainCoefficient = (Vec.dotProd(this.normal,
 				this.position.convertToVec()));
 	}
+	
+	@Override
+	public double Intersect(Ray ray) {
+		Point3D rayOrigin = ray.p;
+		Vec rayDirection = ray.v;
+
+		// Getting intersection point.
+		double t = -(Vec.dotProd(this.normal, rayOrigin.convertToVec()) + plainCoefficient)
+				/ Vec.dotProd(this.normal, rayDirection);
+		Point3D intersectionPoint = Point3D.pointAtEndOfVec(rayOrigin, t,
+				rayDirection);
+		double distance = Point3D.vecFromSub2Points(intersectionPoint,
+				rayOrigin).length();
+
+		// Check direction and if both are normalize.
+		if (Vec.dotProd(rayDirection, this.normal) >= 0) {
+			return Double.POSITIVE_INFINITY;
+		}
+		return distance;
+	}
+
+	@Override
+	public Vec normal(Point3D intersection) {
+		return normal;
+	}
+
 }
