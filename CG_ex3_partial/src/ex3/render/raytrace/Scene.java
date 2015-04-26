@@ -74,7 +74,7 @@ public class Scene implements IInitable {
 		double min = Double.MAX_VALUE;
 		Surface min_surface = null;
 
-		// For each surface check for nearest intersection.
+		// For each surface check for nearest intersection
 		for (Surface surface : surfaces) {
 			double curDist = surface.Intersect(ray);
 			if ((curDist < min) && (curDist > Ray.eps)) {
