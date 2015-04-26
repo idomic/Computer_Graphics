@@ -5,10 +5,20 @@ import java.util.Map;
 import math.Point3D;
 import math.Vec;
 
+/**
+ * 
+ * Describes directional light
+ * @author Dana
+ *
+ */
 public class dirLight extends Light {
 
+	// Direction of light
 	protected Vec direction = null;
 
+	/**
+	 * Constructor
+	 */
 	public dirLight() {
 		super.color = new Vec(1, 1, 1);
 	}
@@ -33,8 +43,7 @@ public class dirLight extends Light {
 	
 	@Override
 	public double getShadow(Point3D point, double paramDouble) {
-		
-		// A dir light has no shadow.
+		// A directional light has no shadow.
 		return 1;
 	}
 }

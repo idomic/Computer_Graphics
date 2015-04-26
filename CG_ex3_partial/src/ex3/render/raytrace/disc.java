@@ -8,9 +8,13 @@ import math.Vec;
 
 public class disc extends Surface {
 
+	// Center point of disc
 	protected Point3D center = null;
+	// Radius of disc
 	protected double radius;
+	// normal to disc
 	protected Vec normal = null;
+	// plain coefficiant
 	private double plainCoefficient;
 
 	public disc() {

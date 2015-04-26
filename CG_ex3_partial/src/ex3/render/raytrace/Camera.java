@@ -8,17 +8,29 @@ import math.Vec;
 /**
  * Represents the scene's camera. contains it's location and coordinates.
  * 
+ * @author Dana
+ *
  */
 public class Camera implements IInitable {
 
+	// Center of Camera
 	protected Point3D eye = null;
+	// Direction camera is pointing
 	protected Vec direction = null;
+	// Point direction canera is pointing
 	protected Point3D lookAt = null;
+	// Horizontal axis
 	protected Vec upDirection = null;
+	// Vertical axis
 	protected Vec rightDirection = null;
+	// Distance of eye from screen
 	protected double screenDist;
+	// Width of screen
 	protected double screenWidth;
 
+	/**
+	 * Constructor
+	 */
 	public Camera() {
 		screenDist = 0;
 		screenWidth = 2;
@@ -26,7 +38,7 @@ public class Camera implements IInitable {
 
 	public void init(Map<String, String> attributes) {
 
-		// initialize from attributes.
+		// initialize from attributes
 		if (attributes.containsKey("eye")) {
 			eye = new Point3D(attributes.get("eye"));
 		}
@@ -40,7 +52,7 @@ public class Camera implements IInitable {
 			direction.normalize();
 		}
 
-		// Set the given up direction.
+		// Set the up direction
 		if (attributes.containsKey("up-direction")) {
 			upDirection = new Vec((String) attributes.get("up-direction"));
 
@@ -51,9 +63,11 @@ public class Camera implements IInitable {
 				upDirection.normalize();
 			}
 		}
+		// Set the screen distance
 		if (attributes.containsKey("screen-dist")) {
 			screenDist = Double.parseDouble(attributes.get("screen-dist"));
 		}
+		// Set the screen width
 		if (attributes.containsKey("screen-width")) {
 			screenWidth = Double.parseDouble(attributes.get("screen-width"));
 		}
@@ -63,11 +77,10 @@ public class Camera implements IInitable {
 	 * Transforms image coordinates to view pane coordinates. Returns the ray
 	 * which goes through the middle.
 	 * 
-	 * @param x
-	 * @param y
-	 * @return Ray
+	 * @param x - x value of pixel
+	 * @param y - y value of pixel
+	 * @return Ray - that from camera through the pixel (x,y) on the canvas
 	 */
-
 	public Ray constructRayThroughPixel(double x, double y, double height,
 			double width) {
 		Point3D centerPoint = Point3D.pointAtEndOfVec(eye, screenDist,
@@ -75,16 +88,16 @@ public class Camera implements IInitable {
 
 		double ratio = screenWidth / width;
 
-		// Calculate the offset from the given (x,y).
+		// Calculate the offset from the given (x,y)
 		double upOffset = ((height / 2) - y) * ratio;
 		double rightOffset = (x - (width / 2)) * ratio;
 
-		// Calculate the point value in the scene.
+		// Calculate the point value in the scene
 		Point3D pixel = new Point3D(centerPoint);
 		pixel.vectorAdd(Vec.scale(rightOffset, rightDirection));
 		pixel.vectorAdd(Vec.scale(upOffset, upDirection));
 
-		// Calculate the vector from the (Position) eye that goes throw the pix.
+		// Calculate the vector from the (Position) eye that goes throw the pixel
 		Vec directionToPixel = Point3D.vecFromSub2Points(pixel, eye);
 		directionToPixel.normalize();
 		return new Ray(eye, directionToPixel);

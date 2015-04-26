@@ -8,9 +8,14 @@ import math.Vec;
 
 public class sphere extends Surface {
 
+	// Center of sphere
 	protected Point3D center = null;
+	//Sphere radius
 	protected double radius;
 
+	/**
+	 * Constructor
+	 */
 	public sphere() { 
 		super.diffuse = new Vec(0.7, 0.7, 0.7);
 		super.specular = new Vec(1, 1, 1);

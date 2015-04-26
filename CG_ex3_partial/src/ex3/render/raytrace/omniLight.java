@@ -7,8 +7,9 @@ import math.Ray;
 import math.Vec;
 
 public class omniLight extends Light {
-
+	// Position of light source
 	protected Point3D pos = null;
+	// attenuation of light 
 	protected Point3D attenuation = null;
 
 	// The attenuation variables.
@@ -16,6 +17,9 @@ public class omniLight extends Light {
 	protected double kl = 0;
 	protected double kq = 0;
 
+	/**
+	 * Constructor
+	 */
 	public omniLight() {
 		pos = new Point3D(0, 0, 0);
 		super.color = new Vec(1, 1, 1);

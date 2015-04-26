@@ -14,12 +14,19 @@ import ex3.render.IRenderer;
 
 public class RayTracer implements IRenderer {
 
+	// scene
 	protected Scene scene;
+	// screen width
 	protected int width;
+	// screen height
 	protected int height;
+	// background image file path
 	protected File path;
+	// background image
 	protected BufferedImage image;
+	// Height of background image
 	protected int imgHeight;
+	// Width of background image
 	protected int imgWidth;
 
 	/**

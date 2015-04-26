@@ -14,14 +14,24 @@ import math.Vec;
  */
 public abstract class Surface implements IInitable {
 
+	// Diffuse coeff
 	protected Vec diffuse = null;
+	// Specular coeff
 	protected Vec specular = null;
+	// ambient coeff
 	protected Vec ambient = null;
+	// Emission of surface
 	protected Vec emission = null;
+	// Shininess coeff
 	protected double shininess;
+	// Reflectance coeff
 	protected double reflectance;
 
+	/**
+	 * Constructor
+	 */
 	public Surface() {
+		// Initialize members with default values
 		diffuse = new Vec(0.7, 0.7, 0.7);
 		specular = new Vec(1, 1, 1);
 		ambient = new Vec(0.1, 0.1, 0.1);

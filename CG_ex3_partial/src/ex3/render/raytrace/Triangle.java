@@ -8,16 +8,25 @@ import math.Vec;
 
 public class Triangle extends Surface {
 
+	// tri point
 	protected Point3D p0;
+	// tri point
 	protected Point3D p1;
+	// tri point
 	protected Point3D p2;
+	// normal to tri
 	private Vec normal;
 
+	/**
+	 * Constructor
+	 * @param p0 - point
+	 * @param p1 - point
+	 * @param p2 - point
+	 */
 	public Triangle(Point3D p0, Point3D p1, Point3D p2) {
 		this.p0 = p0;
 		this.p1 = p1;
 		this.p2 = p2;
-		
 		
 		// Calculates the normal to the plain of the triangle.
 		normal = Vec.crossProd(

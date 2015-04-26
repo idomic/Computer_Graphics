@@ -16,19 +16,31 @@ import math.Vec;
  *
  */
 public class convexPoligon extends Surface {
+	// Points of polygon
 	protected LinkedList<Point3D> pts;
+	// Number of points
 	protected int n;
+	// Normal to surface
 	protected Vec normal;
 
+	/**
+	 * Constructor
+	 */
 	public convexPoligon() {
 	}
 
+	/**
+	 * Constructor - constructs a convex polygon from a list of points 
+	 * 
+	 * @param pts - list of points
+	 * @throws IllegalArgumentException - When points create a non planar polygon
+	 */
 	public convexPoligon(LinkedList<Point3D> pts)
 			throws IllegalArgumentException {
 		pts = new LinkedList<Point3D>();
 		this.n = pts.size();
 
-		// add the points if the poligon is illegal throw exception.
+		// add the points if the polygon is illegal throw exception
 		for (Point3D p : pts)
 			this.pts.add(p);
 		if (!isPlanar())
@@ -82,7 +94,7 @@ public class convexPoligon extends Surface {
 	}
 
 	/**
-	 * Checks if a poligon is convex
+	 * Checks if a polygon is a convex polygon
 	 * 
 	 * @return boolean
 	 */
@@ -116,7 +128,7 @@ public class convexPoligon extends Surface {
 	}
 
 	/**
-	 * Checks if a poligon is planar
+	 * Checks if a polygon is planar
 	 * 
 	 * @return boolean
 	 */
@@ -139,7 +151,6 @@ public class convexPoligon extends Surface {
 	}
 
 	public Vec normal(Point3D p) {
-
 		// create normal and normalize.
 		Vec vec1 = Point3D.vecFromSub2Points((Point3D) this.pts.get(1),
 				(Point3D) this.pts.get(0));
@@ -150,6 +161,13 @@ public class convexPoligon extends Surface {
 		return normal;
 	}
 
+	/**
+	 * Checks if there is an intersection with polygon
+	 * 
+	 * @param p - point
+	 * @param ray - ray through polygon
+	 * @return - true if intersects and false otherwise
+	 */
 	protected boolean IntersectfromPoligon(Point3D p, Ray ray) {
 		Vec vec1 = Point3D.vecFromSub2Points(p, ray.p);
 		
@@ -178,6 +196,14 @@ public class convexPoligon extends Surface {
 		return true;
 	}
 
+	/**
+	 * Find intersection point with plane
+	 * 
+	 * @param planePoint - point on plane
+	 * @param planeNormal - normal to plane
+	 * @param ray - ray through plane
+	 * @return - intersection point
+	 */
 	public Point3D findRayPlaneIntersection(Point3D planePoint,
 			Vec planeNormal, Ray ray) {
 		

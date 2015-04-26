@@ -12,10 +12,14 @@ import math.Vec;
  */
 public abstract class Light implements IInitable {
 
+	// color of light
 	protected Vec color;
 	
 
 
+	/**
+	 * Constructor
+	 */
 	public Light() {
 		color = new Vec(1,1,1);
 	}

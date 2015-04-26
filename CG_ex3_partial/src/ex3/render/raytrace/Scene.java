@@ -19,14 +19,23 @@ import math.Vec;
  */
 public class Scene implements IInitable {
 
+	// List of surfaces
 	protected List<Surface> surfaces = null;
+	// List of light sources
 	protected List<Light> lights = null;
+	// Camera
 	protected Camera camera = null;
+	// Background color if no background image
 	protected Vec backCol = null;
+	// Background texture
 	protected String backTex = null;
+	// maximal recursion level
 	protected int recLevel;
+	// Ambient light
 	protected Vec ambient = null;
+	// Super sampling coefficient (num of subpixels) 
 	protected double superSamp;
+	// Acceleration
 	protected int acceleration;
 
 	public Scene() {
@@ -67,8 +76,8 @@ public class Scene implements IInitable {
 	/**
 	 * Send ray return the nearest intersection. Return null if no intersection
 	 * 
-	 * @param ray
-	 * @return
+	 * @param ray - ray sent
+	 * @return - nearest intersection of if no intersection returns null
 	 */
 	public MinIntersection findIntersection(Ray ray) {
 		double min = Double.MAX_VALUE;
@@ -91,6 +100,13 @@ public class Scene implements IInitable {
 		return new MinIntersection(intersection, min_surface, min);
 	}
 
+	/**
+	 * Calculate color at nearest intersection
+	 * @param ray - ray sent
+	 * @param curLevel - current level in recursion
+	 * @param intersection 
+	 * @return color vector
+	 */
 	public Vec calcColor(Ray ray, int curLevel, MinIntersection intersection) {
 		if(recLevel == curLevel) {
 			return new Vec(0,0,0);
@@ -295,6 +311,10 @@ public class Scene implements IInitable {
 		}
 	}
 
+	/**
+	 * Initializes camera
+	 * @param attributes
+	 */
 	public void setCameraAttributes(Map<String, String> attributes) {
 		this.camera.init(attributes);
 	}

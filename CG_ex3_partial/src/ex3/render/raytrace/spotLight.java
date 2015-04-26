@@ -8,8 +8,11 @@ import math.Vec;
 
 public class spotLight extends Light {
 
+	//Source point of light
 	protected Point3D pos = null;
+	// Light attenuation
 	protected Point3D attenuation = null;
+	// direction of spot light
 	protected Vec direction = null;
 	
 	// The attenuation variables.

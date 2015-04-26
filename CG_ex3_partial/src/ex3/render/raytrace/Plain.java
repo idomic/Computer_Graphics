@@ -12,8 +12,11 @@ import math.Vec;
 public class Plain extends Surface {
 
 	/** The plane is represented by a position and a normal. */
+	// position of plain
 	protected Point3D position;
+	// normal to plain
 	protected Vec normal;
+	// plain coefficient 
 	protected double plainCoefficient;
 
 
