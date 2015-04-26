@@ -43,7 +43,7 @@ public class Triangle extends Surface {
 	}
 
 	@Override
-	public double Intersect(Ray ray, boolean backSide) {
+	public double Intersect(Ray ray) {
 		double inf = Double.MAX_VALUE;
 		Point3D pos = ray.p;
 		Vec direction = ray.v;
