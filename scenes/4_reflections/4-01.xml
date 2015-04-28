@@ -1,0 +1,45 @@
+<scene 
+	background-col="0.3 0.5 0.74" 
+	ambient-light="1 1 1" 
+>
+
+	<camera
+	eye="0 0 0"
+	direction="0 0 -1"
+	screen-width="2"
+	screen-dist="1"
+	up-direction="0 1 0"
+	/>
+
+
+	<sphere 
+	center="0 0 -1"	
+	radius="0.5"
+	reflectance = "0.5"
+	/>
+	
+	<triangle
+	p0="10 -0.5 0.5 "
+	p1=" -10 -0.5 0.5"
+	p2=" 0 9.5 0.5"	
+	reflectance = "0.5"
+	mtl-diffuse="1 0 0"
+	/>
+	
+	<triangle
+	p0="-10 -0.5 0.5"
+	p1="-20 9.5 0.5"
+	p2=" 0 9.5 0.5"	
+	reflectance = "0.5"
+	mtl-diffuse="1 0 0"
+	/>
+
+	<omni-light 
+	pos="0 3 0"
+	color="1 1 1"
+	/>
+
+</scene>
+
+
+
