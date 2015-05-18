@@ -35,7 +35,7 @@ void bounded_buffer_init(BoundedBuffer *buff, int capacity){
 	buff->size = 0;
 	buff->capacity = capacity;
 	buff->head = 0;
-	buff->tail = capacity - 1;
+	buff->tail = capacity - 1; // tail = 0?
 	buff->finished = 0;
 	pthread_mutex_init(&(buff->mutex), NULL); 	 // Init mutex
 	pthread_cond_init(&(buff->cv_empty), NULL); // Init empty condition
@@ -54,27 +54,27 @@ void bounded_buffer_init(BoundedBuffer *buff, int capacity){
  * This function should be synchronized on the buffer's mutex!
  */
 int bounded_buffer_enqueue(BoundedBuffer *buff, char *data){
-	if (buff->finished == 1) {
+		pthread_mutex_lock(&(buff->mutex)); // Begin critical section
+    if (buff->finished == 1) {
+        pthread_mutex_unlock(&(buff->mutex));
 		return 0;
 	}
-
-	pthread_mutex_lock(&(buff->mutex)); // Begin critical section
 	
-	if (buff->size == buff->capacity) { // Wait until it is not full
+	while (buff->size == buff->capacity) { // Wait until it is not full
 		pthread_cond_wait(&(buff->cv_full), &(buff->mutex));
+        if (buff->finished) {
+            pthread_mutex_unlock(&(buff->mutex));
+            return 0;
+        }
 	}
 	
 	// enqueue data and set to 'not empty'
 	buff->tail = ((buff->tail) + 1) % buff->capacity;
-	buff->buffer[buff->tail] = data;
+	buff->buffer[buff->tail] = data; // reverse rows?
 	buff->size++;
-	buff->empty = FALSE;
-
-	if (buff->finished == 1) {
-		return 0;
-	}
+	buff->empty = FALSE; // what is it?
 	
-	pthread_cond_signal(&(buff->cv_empty)); // Signal for any thread waiting for a value
+	pthread_cond_signal(&(buff->cv_full)); // Signal for any thread waiting for a value
 	
 	pthread_mutex_unlock(&(buff->mutex)); // Exit critical section
 
@@ -90,31 +90,36 @@ int bounded_buffer_enqueue(BoundedBuffer *buff, char *data){
  * This function should be synchronized on the buffer's mutex!
  */
 char *bounded_buffer_dequeue(BoundedBuffer *buff){
-	if (buff->finished == 1) {
+    pthread_mutex_lock(&(buff->mutex)); // Begin critical section
+    if (buff->finished == 1) {
+        pthread_mutex_unlock(&(buff->mutex));
 		return 0;
 	}
-
-	pthread_mutex_lock(&(buff->mutex)); // Begin critical section
 	
-	if (buff->size == 0) { // Wait until it is not empty
+	while (buff->size == 0) { // Wait until it is not empty
 		pthread_cond_wait(&(buff->cv_empty), &(buff->mutex));
+        if (buff->finished) {
+            pthread_mutex_unlock(&(buff->mutex));
+            return NULL;
+        }
 	}
 	
 	// dequeue data and set to 'not full'
+    char* data;
 	data = buff->buffer[buff->tail];
 	buff->tail = ((buff->tail) - 1) % buff->capacity;
 	buff->size--;
-	buff->full = FALSE;
+	buff->full = FALSE; // what is this?
 
 	if (buff->finished == 1) {
 		return 0;
 	}
 
-	pthread_cond_signal(&(buff->cv_full)); // Signal for any thread waiting for a value
+	pthread_cond_signal(&(buff->cv_empty)); // Signal for any thread waiting for a value
 	
 	pthread_mutex_unlock(&(buff->mutex)); // Exit critical section
 
-	return 1;
+	return data;
 }
 
 /*
@@ -126,12 +131,9 @@ char *bounded_buffer_dequeue(BoundedBuffer *buff){
 void bounded_buffer_finish(BoundedBuffer *buff){
 	
 	pthread_mutex_lock(&(buff->mutex)); // Begin critical section
-	
 	buff->finished = 1;
-	
 	pthread_cond_broadcast(&(buff->cv_full));
 	pthread_cond_broadcast(&(buff->cv_empty));
-
 	pthread_mutex_unlock(&(buff->mutex)); // Exit critical section
 }
 
@@ -139,15 +141,15 @@ void bounded_buffer_finish(BoundedBuffer *buff){
  * Frees the buffer memory and destroys mutex and condition variables.
  */
 void bounded_buffer_destroy(BoundedBuffer *buff){
-	int i;
+	int i; // should we do loop?
 	for (i = 0; i < capacity; i++)
 	{
 		res = buff->buffer[i];
 		free(res);
 	}
-	pthread_mutex_destroy(&(cubbyHole->mutex)); // Destroy mutex
-	pthread_cond_destroy(&(cubbyHole->cv_empty)); // Destroy empty condition
-	pthread_cond_destroy(&(cubbyHole->cv_full));  // Destroy full condition
+	pthread_mutex_destroy(&(buff->mutex)); // Destroy mutex
+	pthread_cond_destroy(&(buff->cv_empty)); // Destroy empty condition
+	pthread_cond_destroy(&(buff->cv_full));  // Destroy full condition
 	free(buff);
 }
 
