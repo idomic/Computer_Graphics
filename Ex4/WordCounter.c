@@ -129,6 +129,7 @@ int count_words_in_file(char *file_name){
 	FILE *file;
 	int len = 0;	
 	int word_counter;
+	int was_last_alpha = 0;
 	if (file_name == NULL) {
 		return 0;
 	}
