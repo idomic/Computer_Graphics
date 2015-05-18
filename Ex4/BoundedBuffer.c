@@ -35,7 +35,7 @@ void bounded_buffer_init(BoundedBuffer *buff, int capacity){
 	buff->size = 0;
 	buff->capacity = capacity;
 	buff->head = 0;
-	buff->tail = capacity - 1; // tail = 0?
+	buff->tail = 0; //buff->tail = capacity - 1; 
 	buff->finished = 0;
 	pthread_mutex_init(&(buff->mutex), NULL); 	 // Init mutex
 	pthread_cond_init(&(buff->cv_empty), NULL); // Init empty condition
@@ -69,8 +69,8 @@ int bounded_buffer_enqueue(BoundedBuffer *buff, char *data){
 	}
 	
 	// enqueue data and set to 'not empty'
-	buff->tail = ((buff->tail) + 1) % buff->capacity;
 	buff->buffer[buff->tail] = data; // reverse rows?
+	buff->tail = ((buff->tail) + 1) % buff->capacity;
 	buff->size++;
 	buff->empty = FALSE; // what is it?
 	

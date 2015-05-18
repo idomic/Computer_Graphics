@@ -127,9 +127,9 @@ void *run_wordcounter(void *param){
 int count_words_in_file(char *file_name){
 	unsigned char words_buffer[FILE_READ_BUFFER_SIZE];
 	FILE *file;
-	int len = 0;	
-	int word_counter;
-	int was_last_alpha = 0;
+	int len = 0;
+	int word_counter = 0;
+	int was_last_alpha = 0; //Flag that indicates if last char was alphabetic
 	if (file_name == NULL) {
 		return 0;
 	}
@@ -141,21 +141,41 @@ int count_words_in_file(char *file_name){
 
 	while ((len = fread(words_buffer, 1, FILE_READ_BUFFER_SIZE, file)) > 0) {
 		int current_char = 0;
-		while((words_buffer[current_char] != EOF) && (current_char != (FILE_READ_BUFFER_SIZE - 1))){
-			if(!is_alphabetic([current_char])) {
+		while((words_buffer[current_char] != EOF) && (current_char < len)){
+			if(!is_alphabetic(words_buffer[current_char]) && was_last_alpha) {
 				word_counter++;
-		}
+				was_last_alpha = 0;
+			}
+			if(is_alphabetic(words_buffer[current_char])){
+				was_last_alpha = 1;
+			}
 			current_char++;
+		}
 	}
-
     fclose(file);
+	free(words_buffer);
 	return word_counter;
 }
-
 /*
  * logs the number of words in the file to the output log file.
  */
-void log_count(WordCounterData *counter_data, char *file_name, int count);
+void log_count(WordCounterData *counter_data, char *file_name, int count){
+	FILE *log = counter_data->log_file;
+	//create buffer for log data
+	unsigned char insert_to_log[FILE_READ_BUFFER_SIZE];
+	//create buffer for casting int to string
+	unsigned char number_to_string[FILE_READ_BUFFER_SIZE];
+	//insert date string into buffer
+	dateprintf(insert_to_log, MAX_DATE_SIZE, DATE_FORMAT);
+	strcat(insert_to_log, " File: ");
+    strcat(insert_to_log, file_name);
+    strcat(insert_to_log, " || Words: ");
+    sprintf(number_to_string, "%d", count);
+    strcat(insert_to_log, number_to_string);
+    strcat(insert_to_log, "\n");
+    //write log data to log file
+    fputs(insert_to_log,log);	
+}
 
 
 
