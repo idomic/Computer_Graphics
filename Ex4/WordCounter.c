@@ -119,7 +119,27 @@ int is_alphabetic (unsigned char c) {
  * to exit and therefore the thread should simply terminate.
  */
 void *run_wordcounter(void *param){
-
+    BoundedBuffer *buff;
+    char *file;
+    int counter;
+    WordCounterData *data;
+    data = (WordCounterData*)param;
+    buff = data->buff;
+    while (1) {
+        file = bounded_buffer_dequeue(buff);
+        if (file == NULL) {
+            return NULL;
+        }
+        counter = count_words_in_file(file);
+        if (counter == -1) {
+            printf("file %s %s\n",file ,"doesnt exist");
+        } else {
+            log_count(data, file , counter);
+            printf("Counting words for file: ../ %s\n",file);
+            printf("File: ../ %s %s %d\n",file," || Words: ",counter);
+            free(file);
+        }
+    }
 }
 /*
  * A word-counting function. Counts the words in file_name and returns the number.
