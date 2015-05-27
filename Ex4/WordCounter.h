@@ -1,9 +1,5 @@
-/*
- * WordCounter.h
- *
- *  Created on: Apr 26, 2013
- *      Author: yotam
- */
+//Ido Michael 201157138
+//Dana Erlich 200400950
 
 #ifndef WORDCOUNTER_H_
 #define WORDCOUNTER_H_
