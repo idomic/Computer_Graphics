@@ -5,9 +5,8 @@ import java.awt.Point;
 import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
-
+import math.Vec;
 import com.sun.opengl.util.FPSAnimator;
-
 import ex5.models.IRenderable;
 
 /**
@@ -25,7 +24,12 @@ public class Viewer implements GLEventListener {
 	private GLAutoDrawable m_drawable = null; //We store the drawable OpenGL object to refresh the scene
 	private boolean isModelCamera = false; //Whether the camera is relative to the model, rather than the world (ex6)
 	private boolean isModelInitialized = false; //Whether model.init() was called.
-	
+	private int canvasWidth, canvasHeight;
+	//Store rotation matrix between redraws 
+	private double[] rotationMatrix = { 1.0D, 0.0D, 0.0D, 0.0D, 
+		    0.0D, 1.0D, 0.0D, 0.0D, 
+		    0.0D, 0.0D, 1.0D, 0.0D, 
+		    0.0D, 0.0D, 0.0D, 1.0D };
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
@@ -35,19 +39,46 @@ public class Viewer implements GLEventListener {
 			isModelInitialized = true;
 		}
 		//TODO: uncomment the following line to clear the window before drawing
-		//gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+		
+		gl.glMatrixMode(GL.GL_MODELVIEW);
+
+		//gl.glEnable(GL.GL_DEPTH_TEST);
+		gl.glPolygonMode(GL.GL_BACK, GL.GL_POINT);
 
 		setupCamera(gl);
 		if (isAxes)
 			renderAxes(gl);
 		
-		//TODO: set wireframe mode
+		//Set wireframe mode:
+		if (isWireframe) {
+		      gl.glPolygonMode(GL.GL_FRONT, GL.GL_LINE);
+		    } else {
+		      gl.glPolygonMode(GL.GL_FRONT, GL.GL_FILL);
+		 }
+
 
 		model.render(gl);
 	}
+	
+	private Vec mouseOriginToDestVec(Point pt)
+	  {
+	    //Step 1 - Transform Canvas Coordinates to View Plane 
+		double x = 2.0D * pt.x / canvasWidth - 1.0D;
+	    double y = 1.0D - 2.0D * pt.y / canvasHeight;
+	    //Step 2 - Project View Plane Coordinate onto Sphere
+	    double zsquared = 2.0D - x * x - y * y;
+	    if (zsquared < 0.0D) {
+	    	zsquared = 0.0D;
+	    }
+	    double z = Math.sqrt(zsquared);
+	    Vec vector = new Vec(x, y, z);
+	    vector.normalize();
+	    return vector;
+	  }
 
 	private void setupCamera(GL gl) {
-		if (!isModelCamera) { //Camera is in an absolute location
+		if (!this.isModelCamera) { //Camera is in an absolute location
 			//TODO: place the camera. You should use mouseFrom, mouseTo, canvas width and
 			//      height (reshape function), zoom etc. This should actually implement the trackball
 			//		and zoom. You might want to store the rotation matrix in an array for next time.
@@ -55,6 +86,33 @@ public class Viewer implements GLEventListener {
 			//      Example: gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, rotationMatrix, 0);
 			
 			
+			
+			gl.glLoadIdentity(); //replace the current matrix with the identity matrix
+			if ((this.mouseFrom != null) && (this.mouseTo != null))
+			{
+				//Steps 1 & 2:
+				Vec v1 = mouseOriginToDestVec(mouseFrom);
+				Vec v2 = mouseOriginToDestVec(mouseTo);
+				
+				Vec v = Vec.crossProd(v1, v2);
+				
+				if (v.length() > 0.0D)
+				{
+					v.normalize();
+					double alpha = 57.295779513082323D * Math.acos(Vec.dotProd(v1, v2));
+					//Step 3 – Compute Rotation
+					gl.glRotated(alpha, v.x, v.y, v.z);
+				}
+			}
+			//Step 4 – Rotate Model
+			gl.glMultMatrixd(this.rotationMatrix, 0);
+			gl.glGetDoublev(2982, this.rotationMatrix, 0);
+			gl.glLoadIdentity();
+			gl.glTranslated(0.0D, 0.0D, -1.2D);
+			gl.glTranslated(0.0D, 0.0D, -this.zoom);
+			gl.glMultMatrixd(this.rotationMatrix, 0);
+
+
 			//By this point, we should have already changed the point of view, now set these to null
 			//so we don't change it again on the next redraw.
 			mouseFrom = null;
@@ -80,6 +138,7 @@ public class Viewer implements GLEventListener {
 		//gl.glCullFace(GL.GL_BACK);    // Set Culling Face To Back Face
         //gl.glEnable(GL.GL_CULL_FACE); // Enable back face culling
 
+
 		// Initialize display callback timer
 		ani = new FPSAnimator(30, true);
 		ani.add(drawable);
@@ -97,6 +156,25 @@ public class Viewer implements GLEventListener {
 		//TODO: Remember the width and height of the canvas for the trackball.
 		//TODO: Apply zoom using the projection matrix
 		//TODO: Set the projection to perspective.
+		
+		GL gl = drawable.getGL();
+		
+		// Remember the width and height of the canvas for the trackball.
+		canvasWidth = width;
+		canvasHeight = height;
+
+		gl.glMatrixMode(GL.GL_PROJECTION);
+		// replace the current matrix with the identity matrix:
+		gl.glLoadIdentity();
+		// multiply the current matrix by a perspective projection matrix:
+		//gl.glFrustum(-0.1D * width/height, 0.1D * width/height, -0.1D * height/width, 0.1D * height/width, 0.01D, 1000.0D);
+		//gl.glFrustum(-0.1D, 0.1D, -0.1D * height / width, 0.1D * height / width, 0.1D, 1000.0D);
+		gl.glFrustum(-0.1D, 0.1D, -0.1D, 0.1D, 0.1D, 1000.0D);
+
+		//gl.glOrtho(-width/2, width/2, -height/2, height/2, -1, 1000);
+		//gl.glFrustum(-width/2, width/2, -height/2, height/2, 1, 10);
+
+
 	}
 
 	/**
