@@ -9,11 +9,6 @@ public class Cube implements IRenderable {
 	
 	
 	public void render(GL gl) {
-	    drawRGBCube(gl);	
-	}
-	
-	private void drawRGBCube(GL gl)
-	{
 		boolean lightingFlag = gl.glIsEnabled(GL.GL_LIGHTING);
 
 		gl.glBegin(GL.GL_QUADS);// Start Drawing The Cube (GL_QUADS)
