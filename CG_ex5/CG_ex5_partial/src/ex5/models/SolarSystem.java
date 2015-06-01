@@ -29,17 +29,12 @@ public class SolarSystem implements IRenderable {
 	public void render(GL gl) {
 		GLU glu = new GLU();
 		GLUquadric quad = glu.gluNewQuadric();
+		
 		lighting(gl, glu, quad); //Add light sources
-		//drawSolarSystem(gl, glu, quad); //Add Solar system
 		gl.glScaled(0.2D, 0.2D, 0.2D);//scale
 		drawSun(gl, glu, quad);//add sun
-
-		//draw planets
-		drawAllPlanets(gl, glu, quad);
-
-		//clear
+		drawAllPlanets(gl, glu, quad);//add planets
 		glu.gluDeleteQuadric(quad);
-
 	}
 
 	private void lighting(GL gl, GLU glu, GLUquadric quad) {
@@ -95,18 +90,6 @@ public class SolarSystem implements IRenderable {
 	}
 
 
-	private void drawSolarSystem(GL gl, GLU glu, GLUquadric quad) {
-//		gl.glScaled(0.2D, 0.2D, 0.2D);//scale
-//		drawSun(gl, glu, quad);//add sun
-//
-//		//draw planets
-//		drawAllPlanets(gl, glu, quad);
-//
-//		//clear
-//		glu.gluDeleteQuadric(quad);
-
-	}
-
 	private void drawAllPlanets(GL gl, GLU glu, GLUquadric quad) {
 		drawPlanet(gl, glu, quad, 2.0F, 7.0F, 1.5F, 0.1F, MercuryColor, 0.0);
 		drawPlanet(gl, glu, quad, 2.0F, 3.39F, 2.0F, 0.2F, VenusColor, 0.5);
@@ -118,6 +101,8 @@ public class SolarSystem implements IRenderable {
 		drawPlanet(gl, glu, quad, 28.8F, 1.77F, 6.3F, 0.25F, NeptuneColor,1.2);
 		drawPlanet(gl, glu, quad, 57.5F, 17.2F, 6.3F, 0.1F, PlutoColor, 0.5 * Math.PI);
 	}
+
+
 
 
 
