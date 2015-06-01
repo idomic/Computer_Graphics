@@ -1,4 +1,5 @@
-// Dana Erlich 200400950
+//Ido Michael 201157138
+//Dana Erlich 200400950
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,13 +10,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "WordCounter.h"
+#include "BoundedBuffer.h"
+
 
 #define MAX_LOG_LINE_SIZE 1024
 #define MAX_DATE_SIZE 25
 #define DATE_FORMAT "%Y-%m-%d %H:%M:%S"
-
-// TODO: Add more defines as required
-
 #define CMD_EXIT "exit\n"
 
 /*
@@ -56,7 +56,7 @@ int is_alphabetic (unsigned char c) {
  void *run_listener(void *param) {
 	ListenerData *data;
 	BoundedBuffer *buff;
-	int fd, num, len;
+	int fd, num, len, enqueue_result;
 	char message[READ_BUFF_SIZE];
 	char *token;
 	char *token_filename;
@@ -64,22 +64,23 @@ int is_alphabetic (unsigned char c) {
 	data = (ListenerData*)param;
 	buff = data->buff;
 
-	mknod(data->pipe_file, S_IFIFO | FILE_ACCESS_RW, 0);
+	mknod(data->pipe, S_IFIFO | FILE_ACCESS_RW, 0);
 
 	while (1) {
 		// Wait for a connection on the pipe
-		fd = open(data->pipe_file, O_RDONLY);
+		printf("waiting for connection\n");
+		fd = open(data->pipe, O_RDONLY);
 		if (fd <= 0) {
-			perror("open");
-			exit(1);		
+            fprintf(stderr, "Error: cannot open pipe.\n");
+			exit(0);
 		}
-
+		printf("connection recieved.\n");
 		// Read data from pipe
 		while ((num = read(fd, message, READ_BUFF_SIZE)) > 0) {
 			message[num-1] = '\0';
 			// Parse seperate file names by new line
 			token = strtok(message,"\n");
-			
+
 			while (token != NULL) {
 				len = strlen(token);
 				// Allocate memory for a file name
@@ -97,7 +98,7 @@ int is_alphabetic (unsigned char c) {
 					// Free the last allocated file name buffer
 					free(token_filename);
 					// Remove the pipe file
-					if(remove(data->pipe_file) != 0) {
+					if(remove(data->pipe) != 0) {
 						fprintf(stderr, "Error: pipe file could not be removed.\n");
 					}
 					return NULL;
@@ -121,7 +122,7 @@ int is_alphabetic (unsigned char c) {
 void *run_wordcounter(void *param){
     BoundedBuffer *buff;
     char *file;
-    int counter;
+    int word_counter;
     WordCounterData *data;
     data = (WordCounterData*)param;
     buff = data->buff;
@@ -130,14 +131,18 @@ void *run_wordcounter(void *param){
         if (file == NULL) {
             return NULL;
         }
-        counter = count_words_in_file(file);
-        if (counter == -1) {
-            printf("file %s %s\n",file ,"doesnt exist");
+        //1. Count the words in the file and output the operation result to the screen.
+		word_counter = count_words_in_file(file);
+        if (word_counter == -1) {
+           printf("file %s %s\n",file ,"doesn't exist");
+           log_count(data, file , word_counter);
         } else {
-            log_count(data, file , counter);
-            printf("Counting words for file: ../ %s\n",file);
-            printf("File: ../ %s %s %d\n",file," || Words: ",counter);
-            free(file);
+           printf("Counting words for file: ../ %s\n",file);
+           printf("File: ../ %s %s %d\n",file," || Words: ",word_counter);
+            //2. Log the result to the file.
+			log_count(data, file , word_counter);
+			//3. Free the buffer that holds the file name (it was allocated by the Listener thread - this is the place to free it).
+			free(file);
         }
     }
 }
@@ -151,12 +156,12 @@ int count_words_in_file(char *file_name){
 	int word_counter = 0;
 	int was_last_alpha = 0; //Flag that indicates if last char was alphabetic
 	if (file_name == NULL) {
-		return 0;
+		return -1;
 	}
 
 	file = fopen(file_name, "r");
 	if (file == NULL) {
-		return 0;
+		return -1;
 	}
 
 	while ((len = fread(words_buffer, 1, FILE_READ_BUFFER_SIZE, file)) > 0) {
@@ -173,28 +178,35 @@ int count_words_in_file(char *file_name){
 		}
 	}
     fclose(file);
-	free(words_buffer);
 	return word_counter;
 }
 /*
  * logs the number of words in the file to the output log file.
  */
 void log_count(WordCounterData *counter_data, char *file_name, int count){
-	FILE *log = counter_data->log_file;
+	FILE *log_file;
+    log_file = counter_data->log_file;
 	//create buffer for log data
-	unsigned char insert_to_log[FILE_READ_BUFFER_SIZE];
+    char insert_to_log[FILE_READ_BUFFER_SIZE];
 	//create buffer for casting int to string
-	unsigned char number_to_string[FILE_READ_BUFFER_SIZE];
-	//insert date string into buffer
-	dateprintf(insert_to_log, MAX_DATE_SIZE, DATE_FORMAT);
-	strcat(insert_to_log, " File: ");
-    strcat(insert_to_log, file_name);
-    strcat(insert_to_log, " || Words: ");
-    sprintf(number_to_string, "%d", count);
-    strcat(insert_to_log, number_to_string);
-    strcat(insert_to_log, "\n");
-    //write log data to log file
-    fputs(insert_to_log,log);	
+    char number_to_string[FILE_READ_BUFFER_SIZE];
+    if (count == -1) {
+        strcat(insert_to_log, " File: ");
+        strcat(insert_to_log, file_name);
+        strcat(insert_to_log, " doesnt exist");
+        strcat(insert_to_log, "\n");
+    } else {
+    	//insert date string into buffer
+        dateprintf(insert_to_log, FILE_READ_BUFFER_SIZE, DATE_FORMAT);
+        strcat(insert_to_log, " File: ");
+        strcat(insert_to_log, file_name);
+        strcat(insert_to_log, "|| Number of words: ");
+        sprintf(number_to_string, "%d", count);
+        strcat(insert_to_log, number_to_string);
+        strcat(insert_to_log, "\n");
+    }
+	    //write log data to log file
+        fputs(insert_to_log, log_file);
 }
 
 
@@ -213,6 +225,63 @@ void log_count(WordCounterData *counter_data, char *file_name, int count){
  * when the next connection is received).
  * At the end the function should join the threads and exit.
  */
-int main(int argc, char *argv[]);
+int main(int argc, char *argv[]){
+	char *user_input_buff;
+    BoundedBuffer buff;
+    WordCounterData word_counter_data;
+    ListenerData listener_data;
+    pthread_t listener_thread, word_counter_thread;
 
+	//Arguments check
+	if(argc < 3 || argc > 3){
+		printf("Usage: ./WordCounter pipe_file_name destination_log_file_name");
+		exit(1);
+	}
+	char *pipe_file_name = argv[1];
+	char *destination_log_file_name = argv[2];
+
+	//Create the files queue
+	bounded_buffer_init(&buff, FILE_QUEUE_SIZE);
+
+	//Create and start the two threads
+	word_counter_data.buff = &buff;
+    word_counter_data.log_file = fopen(destination_log_file_name, "w");
+    if (word_counter_data.log_file == NULL) {
+    		// Ignore (return) if can't open the dest file
+    		exit(1);
+    	}
+
+    listener_data.buff = &buff;
+    listener_data.pipe = pipe_file_name;
+    pthread_create(&listener_thread, NULL, run_listener, (void*)(&listener_data));
+    pthread_create(&word_counter_thread, NULL, run_wordcounter, (void*)(&word_counter_data));
+    printf("Logging results to file %s\n",destination_log_file_name);
+
+	//Read input (lines) from the user (in a loop)
+	user_input_buff = (char*) malloc (STDIN_READ_BUFF_SIZE);
+	if (user_input_buff == NULL) {
+		fprintf(stderr, "Error: Cannot allocate memory.\n");
+		exit (1);
+	}
+	while (1) {
+        if (fgets (user_input_buff, STDIN_READ_BUFF_SIZE, stdin) == NULL) {
+            fprintf(stderr, "Error: Read error has occurred.\n");
+            exit(1);
+        }
+        //Check if input is equal to CMD_EXIT
+		if (strcmp (user_input_buff, CMD_EXIT) == 0) {
+            bounded_buffer_finish(&buff);
+            break;
+        }
+    }
+
+	//Join the threads
+	pthread_join(listener_thread, NULL);
+    pthread_join(word_counter_thread, NULL);
+	free(user_input_buff);
+	bounded_buffer_destroy(&buff);
+    printf("WordCounter has exited successfully.\n");
+    fclose(word_counter_data.log_file);
+    return 0;
+}
 

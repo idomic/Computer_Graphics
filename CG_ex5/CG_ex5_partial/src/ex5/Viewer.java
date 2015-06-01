@@ -43,7 +43,7 @@ public class Viewer implements GLEventListener {
 		
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 
-		//gl.glEnable(GL.GL_DEPTH_TEST);
+
 		gl.glPolygonMode(GL.GL_BACK, GL.GL_POINT);
 
 		setupCamera(gl);
@@ -135,8 +135,8 @@ public class Viewer implements GLEventListener {
 
 		//TODO: light model, normal normalization, depth test, back face culling, ...
 		
-		//gl.glCullFace(GL.GL_BACK);    // Set Culling Face To Back Face
-        //gl.glEnable(GL.GL_CULL_FACE); // Enable back face culling
+		gl.glCullFace(GL.GL_BACK);    // Set Culling Face To Back Face
+        gl.glEnable(GL.GL_CULL_FACE); // Enable back face culling
 
 
 		// Initialize display callback timer
