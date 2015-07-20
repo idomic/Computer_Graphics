@@ -1,3 +1,5 @@
+// IdoMichael-201157138
+// DanaErlich-200400950
 package ex5;
 
 import java.awt.Point;
@@ -25,12 +27,12 @@ public class Viewer implements GLEventListener {
 	private boolean isModelCamera = false; //Whether the camera is relative to the model, rather than the world (ex6)
 	private boolean isModelInitialized = false; //Whether model.init() was called.
 	private int canvasWidth, canvasHeight;
-	//Store rotation matrix between redraws 
+	//Rotation matrix  - save between redraws 
 	private double[] rotationMatrix = { 1.0D, 0.0D, 0.0D, 0.0D, 
 		    0.0D, 1.0D, 0.0D, 0.0D, 
 		    0.0D, 0.0D, 1.0D, 0.0D, 
 		    0.0D, 0.0D, 0.0D, 1.0D };
-
+	
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		GL gl = drawable.getGL();
@@ -38,14 +40,9 @@ public class Viewer implements GLEventListener {
 			model.init(gl);
 			isModelInitialized = true;
 		}
-		//TODO: uncomment the following line to clear the window before drawing
+
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 		
-		gl.glMatrixMode(GL.GL_MODELVIEW);
-
-
-		gl.glPolygonMode(GL.GL_BACK, GL.GL_POINT);
-
 		setupCamera(gl);
 		if (isAxes)
 			renderAxes(gl);
@@ -58,7 +55,9 @@ public class Viewer implements GLEventListener {
 		 }
 
 
-		model.render(gl);
+		model.render(gl,isAxes);
+		startAnimation();
+
 	}
 	
 	private Vec mouseOriginToDestVec(Point pt)
@@ -79,14 +78,7 @@ public class Viewer implements GLEventListener {
 
 	private void setupCamera(GL gl) {
 		if (!this.isModelCamera) { //Camera is in an absolute location
-			//TODO: place the camera. You should use mouseFrom, mouseTo, canvas width and
-			//      height (reshape function), zoom etc. This should actually implement the trackball
-			//		and zoom. You might want to store the rotation matrix in an array for next time.
-			//		Relevant functions: glGetDoublev, glMultMatrixd
-			//      Example: gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, rotationMatrix, 0);
-			
-			
-			
+	
 			gl.glLoadIdentity(); //replace the current matrix with the identity matrix
 			if ((this.mouseFrom != null) && (this.mouseTo != null))
 			{
@@ -99,7 +91,7 @@ public class Viewer implements GLEventListener {
 				if (v.length() > 0.0D)
 				{
 					v.normalize();
-					double alpha = 57.295779513082323D * Math.acos(Vec.dotProd(v1, v2));
+					double alpha = 60 * Math.acos(Vec.dotProd(v1, v2));
 					//Step 3 – Compute Rotation
 					gl.glRotated(alpha, v.x, v.y, v.z);
 				}
@@ -133,10 +125,15 @@ public class Viewer implements GLEventListener {
 		GL gl = drawable.getGL();
 		drawable.setGL(new javax.media.opengl.DebugGL(gl));
 
-		//TODO: light model, normal normalization, depth test, back face culling, ...
-		
 		gl.glCullFace(GL.GL_BACK);    // Set Culling Face To Back Face
-        gl.glEnable(GL.GL_CULL_FACE); // Enable back face culling
+		gl.glEnable(GL.GL_CULL_FACE); // Enable back face culling
+
+		gl.glEnable(GL.GL_NORMALIZE);
+
+		gl.glEnable(GL.GL_DEPTH_TEST);
+
+		gl.glLightModelf(GL.GL_LIGHT_MODEL_TWO_SIDE, 1.0F);
+		gl.glEnable(GL.GL_LIGHTING);
 
 
 		// Initialize display callback timer
@@ -153,9 +150,6 @@ public class Viewer implements GLEventListener {
 
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-		//TODO: Remember the width and height of the canvas for the trackball.
-		//TODO: Apply zoom using the projection matrix
-		//TODO: Set the projection to perspective.
 		
 		GL gl = drawable.getGL();
 		
@@ -167,14 +161,8 @@ public class Viewer implements GLEventListener {
 		// replace the current matrix with the identity matrix:
 		gl.glLoadIdentity();
 		// multiply the current matrix by a perspective projection matrix:
-		//gl.glFrustum(-0.1D * width/height, 0.1D * width/height, -0.1D * height/width, 0.1D * height/width, 0.01D, 1000.0D);
-		//gl.glFrustum(-0.1D, 0.1D, -0.1D * height / width, 0.1D * height / width, 0.1D, 1000.0D);
 		gl.glFrustum(-0.1D, 0.1D, -0.1D, 0.1D, 0.1D, 1000.0D);
-
-		//gl.glOrtho(-width/2, width/2, -height/2, height/2, -1, 1000);
-		//gl.glFrustum(-width/2, width/2, -height/2, height/2, 1, 10);
-
-
+		gl.glMatrixMode(GL.GL_MODELVIEW);
 	}
 
 	/**
@@ -224,6 +212,12 @@ public class Viewer implements GLEventListener {
 		model.control(IRenderable.TOGGLE_LIGHT_SPHERES, null);
 		m_drawable.repaint();
 	}
+	
+	public void toggleSubModel(){
+	    this.model.control(1, null);
+	    this.m_drawable.repaint();
+	  }
+	
 
 	/**
 	 * Toggle whether axes are shown.

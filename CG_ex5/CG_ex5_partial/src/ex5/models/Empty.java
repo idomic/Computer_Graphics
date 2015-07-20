@@ -1,3 +1,5 @@
+// IdoMichael-201157138
+// DanaErlich-200400950
 package ex5.models;
 
 import javax.media.opengl.GL;
@@ -10,7 +12,7 @@ public class Empty implements IRenderable {
 	
 	private boolean isLightSpheres = true;
 	
-	public void render(GL gl) {
+	public void render(GL gl, boolean isAxis) {
 		//TODO Define your OpenGL scene here.
 	}
 	

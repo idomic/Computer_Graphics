@@ -1,3 +1,5 @@
+// IdoMichael-201157138
+// DanaErlich-200400950
 package ex5.models;
 
 import javax.media.opengl.GL;
@@ -8,8 +10,10 @@ public class Cube implements IRenderable {
 	
 	
 	
-	public void render(GL gl) {
+	public void render(GL gl, boolean isAxis) {
+		
 		boolean lightingFlag = gl.glIsEnabled(GL.GL_LIGHTING);
+	    gl.glDisable(GL.GL_LIGHTING);
 
 		gl.glBegin(GL.GL_QUADS);// Start Drawing The Cube (GL_QUADS)
 		
@@ -81,7 +85,7 @@ public class Cube implements IRenderable {
 
 	@Override
 	public void init(GL gl) {
-		//TODO If you need to initialize any OpenGL parameters, here is the place.
+
 	}
 
 	@Override

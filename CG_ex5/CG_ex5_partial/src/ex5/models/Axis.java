@@ -1,3 +1,5 @@
+// IdoMichael-201157138
+// DanaErlich-200400950
 package ex5.models;
 
 import javax.media.opengl.GL;

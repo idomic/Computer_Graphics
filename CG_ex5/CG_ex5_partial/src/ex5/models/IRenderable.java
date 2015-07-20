@@ -1,3 +1,5 @@
+// IdoMichael-201157138
+// DanaErlich-200400950
 package ex5.models;
 
 import javax.media.opengl.GL;
@@ -18,7 +20,7 @@ public interface IRenderable {
 	 * @param gl
 	 *            GL context
 	 */
-	public void render(GL gl);
+	public void render(GL gl, boolean isAxis);
 
 	/**
 	 * Initialize the model

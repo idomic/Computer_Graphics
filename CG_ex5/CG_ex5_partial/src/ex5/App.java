@@ -1,3 +1,5 @@
+// IdoMichael-201157138
+// DanaErlich-200400950
 package ex5;
 
 import java.awt.BorderLayout;
@@ -24,7 +26,7 @@ import ex5.models.IRenderable;
 
 public class App {
 	
-	static IRenderable[] models = {new Empty(), new Cube(), new SolarSystem()}; //TODO: Set additional models here
+	static IRenderable[] models = {new Empty(), new Cube(), new SolarSystem()}; 
 	static Point prevMouse;
 	static int currentModel;
 	static Frame frame;
@@ -79,10 +81,13 @@ public class App {
 					viewer.setModel(nextModel());
 
 				// Set camera to follow model (ex6)
-				//ex6: uncomment the following 2 lines to enable placing the camera ralative to the model
-				//if (e.getKeyChar() == 'c')
-				//	viewer.toggleModelCamera();
-				
+				if (e.getKeyChar() == 'c')
+					viewer.toggleModelCamera();
+			
+				// Change current sub model
+				if (e.getKeyChar() == 's') 
+			         viewer.toggleSubModel();
+				 
 				canvas.repaint();
 				super.keyTyped(e);
 			}
