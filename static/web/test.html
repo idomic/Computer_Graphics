@@ -1,0 +1,14 @@
+Line1
+Line2
+Line3: <button >click here</button>
+
+<script>
+	function errReport(e){
+		console.log(e.target);
+		e.target.onclick = function(){
+			
+			document.write((new Error()).stack);
+		}
+	}
+	document.addEventListener('click',errReport,true);
+</script>
