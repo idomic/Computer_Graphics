@@ -21,5 +21,12 @@ $( document ).ready(function() {
             modifier: 1,
             slideShadows : true
         }
-    });    
+    }); 
+     
 });
+
+function myFunction(str){
+    document.getElementById("backimg").src = str;
+    document.getElementById("flb-close").click();
+
+    };
