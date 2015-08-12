@@ -33,3 +33,14 @@ h1 {
     -ms-touch-action: none;
     touch-action: none;
 }
+
+.thumb{
+    width:100px;
+    height:100px;
+    margin:5px;
+    float:left;
+}
+
+.uploader{
+    clear:both;
+}
