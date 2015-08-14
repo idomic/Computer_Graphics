@@ -26,28 +26,22 @@ $( document ).ready(function() {
 });
 
 function myFunction(str){
-    document.getElementById("backimg").src = str;
+    document.getElementById("myImg").src = str;
     document.getElementById("flb-close").click();
 
     };
 
 
-var myApp = angular.module('myApp',[]);
+$(function () {
+    $(":file").change(function () {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = imageIsLoaded;
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+});
 
-
-function MyCtrl($scope) {
-    $scope.stepsModel = [];
-
-    $scope.imageUpload = function(element){
-        var reader = new FileReader();
-        reader.onload = $scope.imageIsLoaded;
-        reader.readAsDataURL(element.files[0]);
-    }
-
-    $scope.imageIsLoaded = function(e){
-        $scope.$apply(function() {
-            $scope.stepsModel.push(e.target.result);
-        });
-    }
-}
-    
+function imageIsLoaded(e) {
+    $('#myImg').attr('src', e.target.result);
+};    

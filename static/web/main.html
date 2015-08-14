@@ -16,18 +16,12 @@
 
 	</p>
 
-<div ng-controller="MyCtrl">
+<input type='file' />
+<!-- <img id="myImg" src="#" alt="your image" /> -->
 
-    <div ng-repeat="step in stepsModel">
-        <img class="thumb" ng-src="{{step}}" />
-    </div>
-    
-   
+<img id="myImg" src="#" onerror="if (this.src != 'img/img1.jpg') this.src = 'img/img1.jpg';" alt="NO IMAGE">
 
-	<img src="img/img1.jpg" id="backimg" class="thumb" ng-src="{{step}}" /> 
-	<input type='file' ng-model-instant onchange="angular.element(this).scope().imageUpload(this)" />
-</div>
-
+ <!--   	<img src="img/img1.jpg" id="backimg" class="thumb" ng-src="{{step}}" />  -->
 
 	<!-- Slider main container -->
 	<div class="swiper-container">
@@ -73,5 +67,6 @@
 
 	<script type="text/javascript">$('body').flipLightBox()</script>
 	<script src="js/myScript.js"></script>
+	
 </body>
 </html>
